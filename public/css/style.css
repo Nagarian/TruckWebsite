@@ -1,0 +1,30 @@
+html, body{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.height100{
+	height: 100% !important;
+}
+
+.noPadding{
+	padding: 0 !important;
+}
+
+.noMargin{
+	margin: 0 !important;
+}
+
+.toggle{
+	padding-top:12px !important;
+}
+
+#iconAlert{
+	margin-right: 10px;
+	padding: 13px 15px 0px;
+}
+
+.margintop45px{
+	margin-top: 45px;
+}
