@@ -62,3 +62,7 @@ ul{list-style-type: none}
 	background: #eee;
 	border-radius: 2px;
 }
+
+.DTTT_container{
+	display: none !important;
+}
