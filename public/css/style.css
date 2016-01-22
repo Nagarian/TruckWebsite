@@ -28,3 +28,37 @@ html, body{
 .margintop45px{
 	margin-top: 45px;
 }
+
+.buttonOnMap{
+	right: 0;
+	position: absolute;
+	margin-top: 10px !important;
+	margin-right: 10px !important;
+	z-index: 99;
+}
+
+@media (max-width: 991px){
+.right_col {
+    padding: 0px !important;
+}
+
+#map{
+	width: 100%;
+	height: 100%;
+}
+
+.modal-content{
+	border-radius: 0px !important;
+}
+
+ul{list-style-type: none}
+
+.paramMap{
+	list-style-type:none; 
+}
+
+.paramMap li{
+	padding: 10px;
+	background: #eee;
+	border-radius: 2px;
+}

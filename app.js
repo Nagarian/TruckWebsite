@@ -22,12 +22,21 @@ app.get('/login', function(req, res){
     res.render('login.ejs');
 });
 
+
 app.get('/vehicules', function(req, res){
     res.render('vehicules.ejs');
 });
 
+app.get('/establishments', function(req, res){
+    res.render('establishments.ejs');
+});
+
 app.get('/users', function(req, res){
     res.render('users.ejs');
+});
+
+app.get('/missions', function(req, res){
+    res.render('missions.ejs');
 });
 
 app.get('/profile', function(req, res){
