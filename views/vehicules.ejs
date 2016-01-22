@@ -34,9 +34,10 @@
                         <div class="col-md-4 col-sm-4 col-xs-12 animated fadeInDown">
                             <div class="well profile_view">
                                 <div class="col-sm-12" style="min-height: 160px;">
-                                    <h4 class="brief"><i>${typeCompte}</i></h4>
+                                    <h4 class="brief"><i>${Marque} : ${Modele}</i></h4>
                                     <div class="left col-xs-7">
-                                        <h2>${Marque} : ${Modele}</h2>
+                                        <p><strong>Description : </strong> ${description}
+                                        </p>
                                         <p><strong>${typeVehicule}</strong></p>
                                         <p><strong>${etatActuel}</strong></p>
                                     </div>
@@ -48,7 +49,7 @@
                                     <div class="col-xs-12 col-sm-12 emphasis">
                                         <button type="button" class="btn btn-primary btn-xs"
                                          data-toggle="modal" data-target=".bs-example-modal-lg">  
-                                            <i class="fa fa-user"> </i> Consulter
+                                            <i class="fa fa-truck"> </i> Consulter
                                         </button>
                                          <button type="button" class="btn btn-danger btn-xs"
                                         data-toggle="modal" data-target=".bs-example-modal-sm"> 
@@ -103,83 +104,39 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
-                                <div style="font-size:18px;"><strong>État-civil</strong></div>
+                                <div style="font-size:18px;"><strong>Fiche du véhicule</strong></div>
 
                                 <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                                     <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Prénom
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="vehi-modele">Modele
                                         </label>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input disabled type="text" id="first-name" class="form-control col-md-7 col-xs-12">
+                                            <input disabled type="text" id="vehi-modele" class="form-control col-md-7 col-xs-12">
+                                            </input>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="vehi-marque">Marque
+                                        </label>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <input disabled type="text" id="vehi-marque" name="vehi-marque" required="required" class="form-control col-md-7 col-xs-12">
+                                            </input>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <textarea disabled class="form-control" rows="3"></textarea>
+                                        </div>
+                                    </div>
 
-                                            </input>
-                                        </div>
-                                    </div>
                                     <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Nom
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input disabled type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12">
-                                            </input>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Sexe</label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <div id="gender" class="btn-group" data-toggle="buttons">
-                                                <label class="btn btn-primary active" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-                                                    <input type="radio" name="gender" value="male" checked=""> &nbsp; Homme &nbsp;
-                                                </label>
-                                                <label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-                                                    <input type="radio" name="gender" value="female" >  &nbsp; Femme &nbsp;
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Date de naissance
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input disabled id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
-                                            </input>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Profil</label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <select class="form-control" disabled>
-                                                <option selected>Conducteur</option>
-                                                <option></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Permis</label>
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Type</label>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                             <select class="form-control" disabled>
                                                 <option selected>Camion</option>
                                                 <option></option>
                                             </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="divider-dashed"></div>
-                                    <div style="font-size:18px;"><strong>Téléphone</strong></div>
-
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone-num">Numéro
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input disabled type="text" id="telephone-num" class="form-control col-md-7 col-xs-12">
-                                            </input>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone-serie">Numéro de série
-                                        </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input disabled type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12">
-                                            </input>
                                         </div>
                                     </div>
                                     <div class="form-group">
