@@ -43,6 +43,10 @@ app.get('/profile', function(req, res){
     res.render('profile.ejs');
 });
 
+app.get('/addMission', function(req, res){
+    res.render('addMission.ejs');
+});
+
 app.listen(app.get('port'), function() {
 	console.log("Server is running on port " + 4000);
 });
