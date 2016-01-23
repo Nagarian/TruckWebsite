@@ -39,7 +39,7 @@
                                         <img style="width: 100%; display: block;" src="images/etab_garage.jpg" alt="image" />
                                         <div class="mask no-caption">
                                             <div class="tools tools-bottom">
-                                                <a href="#">
+                                                <a href="#" id="popupMap">
                                                     <i class="fa fa-search" data-toggle="modal" data-target=".bs-example-modal-lg"></i>
                                                 </a>
                                                 <a href="#">
@@ -285,12 +285,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
-
-
-
-
                         </div>
                     </div>
                 </div>
@@ -383,8 +377,6 @@
             </div>
         </div>
     </div>
-
-    </div>
 </div>
 
 <!-- script for map -->
@@ -394,33 +386,19 @@ var map;
 var center = [];
   function initMap() {
 
-    var locations = [
-      ['Garage 1', 44.859468, -0.592314, 1],
-    ];
     window.map = new google.maps.Map(document.getElementById('map'), {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
     var infowindow = new google.maps.InfoWindow();
-
     var bounds = new google.maps.LatLngBounds();
 
-    for (i = 0; i < locations.length; i++) {
-        marker = new google.maps.Marker({
-            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-            map: map,
-        });
+    marker = new google.maps.Marker({
+        position: new google.maps.LatLng(44.859468, -0.592314),
+        map: map,
+    });
 
-        bounds.extend(marker.position);
-
-        google.maps.event.addListener(marker, 'click', (function (marker, i) {
-            return function () {
-                infowindow.setContent(locations[i][0]);
-                infowindow.open(map, marker);
-            }
-        })(marker, i));
-    }
-
+    bounds.extend(marker.position);
     map.fitBounds(bounds);
 
     var listener = google.maps.event.addListener(map, "idle", function () {
@@ -429,5 +407,6 @@ var center = [];
   }
 </script>
 
+<script src="js/ref_map.js"></script>
 <!-- /page content -->
 <%- include('footer') -%>
