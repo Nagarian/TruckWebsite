@@ -1,0 +1,232 @@
+<%- include('header') -%>
+
+<div class="right_col" role="main">
+
+<div class="">
+    <div class="page-title margintop45px">
+        <div class="title_left">
+            <h3>Détails de la mission - ${mission.mission}</h3>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                 <p>Veuillez trouver ci-dessous l'intégralité des informations associées à la mission en cours de consultation.</p>
+
+                <div class="x_panel">
+
+                    <div class="x_content">
+                        <form class="form-horizontal form-label-left">
+
+                             <!-- INFOS PRINCIPALES -->
+
+                             <div style="font-size:18px;"><strong>Informations principales :</strong></div>
+
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Intitulé </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="name" class="form-control col-md-7 col-xs-12" name="name" type="text" disabled/>
+                                </div>
+                            </div>
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="date">Date</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="date" id="date" name="date" disabled class="form-control col-md-7 col-xs-12"/>
+                                </div>
+                            </div>
+
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="description">Description</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <textarea id="description" name="description" class="form-control col-md-7 col-xs-12" disabled></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="conducteur">Utilisateur</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="conducteur" class="form-control col-md-7 col-xs-12" name="conducteur" type="text" disabled />
+                                </div>
+                            </div>
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="conducteur">Véhicule</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="vehicule" class="form-control col-md-7 col-xs-12" name="vehicule" type="text" disabled />
+                                </div>
+                            </div>
+
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuEnlevement">Lieu d'enlèvement</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="lieuEnlevement" name="lieuEnlevement" class="form-control col-md-7 col-xs-12" disabled />
+                                </div>
+                            </div>
+                            <div class="item form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuLivraison">Lieu de livraison</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input id="lieuLivraison" name="lieuLivraison" class="form-control col-md-7 col-xs-12" disabled/>
+                                </div>
+                            </div>
+                            
+
+
+                            <!-- ETAPES -->
+
+                            <div class="divider-dashed"></div>
+                            <div style="font-size:18px;margin-top:5px;margin-bottom:10px;"><strong>Etapes</strong></div>
+
+                            <p>Liste des étapes de la mission.</p>
+
+                            <table id="tableEtapes" class="table table-striped responsive-utilities jambo_table" style="margin-bottom:10px;">
+                                <thead>
+                                    <tr class="headings">
+                                        <th>Numéro</th>
+                                        <th>Date </th>
+                                        <th>Type étape </th>
+                                        <th>Description</th>
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr class="even pointer">
+                                        <td class="a-center ">1</td>
+                                        <td class=" ">May 23, 2014 11:47:56 PM </td>
+                                        <td class=" ">Démarrage</td>
+                                        <td class=" ">RAS</i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="col-md-12 col-sm-12 col-xs-12" style="height:500px;margin-bottom:20px;">
+                                <div id="mapEtapes" style="width:100%;height:100%;"></div>
+                                <div class="divider-dashed"></div>
+                            </div>
+
+
+
+
+
+                            <!-- PANNES -->
+
+                            
+                            <div style="font-size:18px;margin-top:5px;margin-bottom:10px;"><strong>Pannes</strong></div>
+
+                            <p>Liste des pannes survenues au cours de la mission.</p>
+
+                            <table id="tablePannes" class="table table-striped responsive-utilities jambo_table" style="margin-bottom:10px;">
+                                <thead>
+                                    <tr class="headings">
+                                        <th>Date</th>
+                                        <th>Réparateur </th>
+                                        <th>Etat panne </th>
+                                        <th>Actions</th>
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr class="even pointer">
+                                        <td class="a-center ">May 23, 2014 11:47:56 PM </td>
+                                        <td class=" ">MARTIN Michel</td>
+                                        <td class=" ">Corrigée</td>
+                                        <td class=" "><a href="#">Voir la fiche associée</a></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            
+                            <!-- PIECES-JOINTES -->
+
+                            <div class="divider-dashed"></div>
+                            <div style="font-size:18px;margin-top:5px;margin-bottom:10px;"><strong>Pièces-jointes</strong></div>
+
+                            <p>Liste des pièces-jointes associées à la mission.</p>
+
+                            <table id="tablePJ" class="table table-striped responsive-utilities jambo_table">
+                                <thead>
+                                    <tr class="headings">
+                                        <th>Nom</th>
+                                        <th>Date </th>
+                                        <th>Description </th>
+                                        <th class=" no-link last"><span class="nobr">Action</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr class="odd pointer" style="text-align:center">
+                                        <td colspan="4">Aucune pièce-jointe n'est associée à la mission.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                           
+
+
+
+
+                            <div class="ln_solid"></div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                        </form>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- script for map -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpkq2qmv4bMGXAiwbpnEfyHm-wTnqOc8&callback=initMap" async defer></script>
+<script type="text/javascript">
+var map;
+var center = [];
+  function initMap() {
+    //Liste des étapes
+    var locations = [
+      ['Ingésup', 44.8548213, -0.5669609999999999, 1],
+      ['Gillian', 44.8613528, -0.5643929999999955, 2],
+      ['Maincare Solutions', 44.7826402, -0.6353303999999298, 3],
+      ['Perard Castle', 44.204335, 0.5963481999999658, 4],
+    ];
+    window.map = new google.maps.Map(document.getElementById('mapEtapes'), {
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var bounds = new google.maps.LatLngBounds();
+
+    for (i = 0; i < locations.length; i++) {
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+            map: map,
+        });
+
+        bounds.extend(marker.position);
+
+        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+            return function () {
+                infowindow.setContent(locations[i][0]);
+                infowindow.open(map, marker);
+            }
+        })(marker, i));
+    }
+
+    map.fitBounds(bounds);
+
+    var listener = google.maps.event.addListener(map, "idle", function () {
+        google.maps.event.removeListener(listener);
+    });
+  }
+</script>
+<%- include('footer') -%>

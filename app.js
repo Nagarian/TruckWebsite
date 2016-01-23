@@ -1,3 +1,4 @@
+//var edge = require('edge');
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -15,13 +16,19 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/', function(req, res){
+	/*
+	api.func({
+	    assemblyFile: 'CGPTruck.WebAPI.dll',
+	    typeName: 'CGPTruck.WebAPI.BLL.BLLMissions',
+	    methodName: 'GetMissionOfDriver(1)' // Func<object,Task<object>>
+	}});
+	*/
     res.render('index.ejs');
 });
 
 app.get('/login', function(req, res){
     res.render('login.ejs');
 });
-
 
 app.get('/vehicules', function(req, res){
     res.render('vehicules.ejs');
@@ -38,13 +45,12 @@ app.get('/users', function(req, res){
 app.get('/missions', function(req, res){
     res.render('missions.ejs');
 });
+app.get('/voirMission', function(req, res){
+    res.render('viewMission.ejs');
+});
 
 app.get('/profile', function(req, res){
     res.render('profile.ejs');
-});
-
-app.get('/addMission', function(req, res){
-    res.render('addMission.ejs');
 });
 
 app.listen(app.get('port'), function() {
