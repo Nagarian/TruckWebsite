@@ -45,6 +45,9 @@ app.get('/users', function(req, res){
 app.get('/missions', function(req, res){
     res.render('missions.ejs');
 });
+app.get('/addMission', function(req, res){
+    res.render('addMission.ejs');
+});
 app.get('/voirMission', function(req, res){
     res.render('viewMission.ejs');
 });
