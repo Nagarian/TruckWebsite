@@ -1,92 +1,103 @@
-    <%- include('header') -%>
-    <!-- page content -->
-    <div class="right_col height100 " style="padding:50px 0 120px 0;" role="main">
-        <div class="btn-group buttonOnMap">
-          <button class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg" type="button">
-            <i class="fa fa-cog"></i>
-          </button>
-        </div>
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-          <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                      </button>
-                      <h4 class="modal-title" id="myModalLabel">Paramétrage</h4>
+<%- include('header') -%>
+<!-- page content -->
+<div class="right_col height100 " style="padding:50px 0 120px 0;" role="main">
+    <div class="btn-group buttonOnMap">
+      <button class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg" type="button">
+        <i class="fa fa-cog"></i>
+      </button>
+    </div>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">Paramétrage</h4>
+              </div>
+              <div class="modal-body">
+                  <h4>Informations à afficher : </h4>
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <ul class="paramMap">
+                        <li>
+                          <img src="images/mapicons_propCamionMission.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propCamionMission" checked> Camions en mission</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propCamionMissionPanne.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" d="propCamionMissionPanne" checked> Camions en mission - En panne !</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propCamionGarage.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propCamionGarage"  value=""> Camions au garage</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propReparateurs.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propReparateurs" checked> Voitures de réparation</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propReparateursMission.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propReparateursMission" checked> Voitures de réparation - Mission</label>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <ul class="paramMap">
+                        <li>
+                          <img src="images/mapicons_propLieuGarage.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuGarage" value=""> Garages</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propLieuEntrepot.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuEntrepot" value=""> Entrepôts</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propLieuCentreRepar.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuCentreRepar" value=""> Centres de réparation</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propLieuResto.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuResto" value=""> Restaurants</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propLieuStation.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuStation" value=""> Stations service</label>
+                        </li>
+                        <li>
+                          <img src="images/mapicons_propLieuClient.jpg" class="propMapImg"/>
+                          <label><input class="checkPropMap" type="checkbox" id="propLieuClient" value=""> Clients</label>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                  <div class="modal-body">
-                      <h4>Véhicules à afficher : </h4>
-                      <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <ul class="paramMap">
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                          </ul>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                          <ul class="paramMap">
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                            <li><label><input type="checkbox" value=""> Option 1</label></li>
-                          </ul>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-primary">Appliquer</button>
-                  </div>
-                </div>
+              </div>
+              <!--
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary">Appliquer</button>
+              </div>
+              -->
             </div>
         </div>
-        <div id="map" style="width:100%;height:100%;position:relative;z-index:1;"></div>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpkq2qmv4bMGXAiwbpnEfyHm-wTnqOc8&callback=initMap" async defer></script>
-        <script type="text/javascript">
-        var map;
-        var center = [];
-          function initMap() {
+    </div>
+    <div id="map" style="width:100%;height:100%;position:relative;z-index:1;"></div>
+</div>
 
-            var locations = [
-              ['Ingésup', 44.8548213, -0.5669609999999999, 1],
-              ['Gillian', 44.8613528, -0.5643929999999955, 2],
-              ['Maincare Solutions', 44.7826402, -0.6353303999999298, 3],
-              ['Perard Castle', 44.204335, 0.5963481999999658, 4],
-            ];
-            window.map = new google.maps.Map(document.getElementById('map'), {
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpkq2qmv4bMGXAiwbpnEfyHm-wTnqOc8&callback=initMap" async defer></script>
+<script src="js/mission_map.js"></script>
+<script type="text/javascript">
+map;
+center = [];
+  function initMap() {
+    googlMap = google.maps;
+    //INIT de base de la map
+    window.map = new googlMap.Map(document.getElementById('map'), {
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    var infowindow = new googlMap.InfoWindow();
+    bounds = new google.maps.LatLngBounds();
+    map.fitBounds(bounds);
+  }
+</script>
 
-            var infowindow = new google.maps.InfoWindow();
-
-            var bounds = new google.maps.LatLngBounds();
-
-            for (i = 0; i < locations.length; i++) {
-                marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-                    map: map,
-                });
-
-                bounds.extend(marker.position);
-
-                google.maps.event.addListener(marker, 'click', (function (marker, i) {
-                    return function () {
-                        infowindow.setContent(locations[i][0]);
-                        infowindow.open(map, marker);
-                    }
-                })(marker, i));
-            }
-
-            map.fitBounds(bounds);
-
-            var listener = google.maps.event.addListener(map, "idle", function () {
-                google.maps.event.removeListener(listener);
-            });
-          }
-
-
-      </script>
-
-    <%- include('footer') -%>
+<%- include('footer') -%>
 

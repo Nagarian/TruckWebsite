@@ -61,3 +61,11 @@ html, body{
 	border-radius: 2px;
 }
 
+.checkPropMap{
+	float: right;
+	margin-left: 10px;
+}
+.propMapImg{
+	margin-right:10px;
+}
+
