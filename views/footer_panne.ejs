@@ -21,6 +21,7 @@
                                     </label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                         <input disabled type="text" id="mission-name" class="form-control col-md-7 col-xs-12" value="Livraison de lait" />
+                                        <input disabled type="hidden" id="hidMissionId" value="1" />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -67,8 +68,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-md-3 col-sm-3 col-xs-12">Qui envoyer ?</label>
                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                        <select class="form-control">
-                                            <option selected>MARTIN Hélène</option>
+                                        <select id="reparateurIdFormSelect" class="form-control">
+                                            <option value="1" selected>MARTIN Hélène</option>
                                         </select>
                                     </div>
                                 </div>
@@ -79,9 +80,8 @@
                 </div>
             </div>
 
-
             <div class="modal-footer">
-                <button type="submit" style="margin-bottom:0px;" class="btn btn-primary" data-dismiss="modal">Envoyer</button>
+                <button type="button" id="envoiReparateurBTN" style="margin-bottom:0px;" class="btn btn-primary" data-dismiss="modal">Envoyer</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
             </div>
 

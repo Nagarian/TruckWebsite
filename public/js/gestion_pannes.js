@@ -8,9 +8,14 @@ $(window).load(function(){
 		{'id': '3', 'date':'16/01/2016', 'nomMission' : 'Livraison de jus d\'orange', 'description': 'description bidon d\'une mission trop cool.' }
 	];
 
+	//Appel de la méthode de récupération des pannes / 10 secondes
     setInterval(getPannesFromJSON, 10000);
-    //Call the function
     getPannesFromJSON();
+
+    //Clic pour la pop-up
+    $("#envoiReparateurBTN").click(function(){
+		postEnvoiReparateur();
+    });
 });
 
 function getPannesFromJSON(){
@@ -28,7 +33,7 @@ function getPannesFromJSON(){
 	    },
 
 	    complete : function(resultat, statut){
-	   		console.log("Récupération des pannes");
+	   		console.log("/!\\ Récupération des pannes");
 	   		supprimerBillets();
 	       	//FAKE : traitement du résultat => Transformation en tableau de pannes
 			gestionBillets();
@@ -84,5 +89,34 @@ function supprimerBillets(){
 	$("#menuPannes li").remove();
 }
 
+
+
+/********* GESTION PANNES - POP-UP DE CONSULTATION D'UNE PANNE ********/
+function postEnvoiReparateur(){
+	$.ajax({
+	    url : '/envoiReparateur',
+	    type : 'POST',
+	    dataType : 'html',
+	    data : {
+	    	reparateurId : $("#reparateurIdFormSelect option[selected]").val(),
+	    	missionId : $("#hidMissionId").val()
+	    },
+	    success : function(code_html, statut){
+	       	supprimerBillets();
+	       	//FAKE : traitement du résultat => Transformation en tableau de pannes
+			gestionBillets();
+	    },
+
+	    error : function(resultat, statut, erreur){
+	    },
+
+	    complete : function(resultat, statut){
+	   		console.log("Récupération des pannes");
+	   		supprimerBillets();
+	       	//FAKE : traitement du résultat => Transformation en tableau de pannes
+			gestionBillets();
+	    }
+	});
+}
 
 
