@@ -8,8 +8,9 @@ var ffi = require('ffi');
 
 var app = express();
 
+
 app.set('port', (process.env.PORT || 4000));
-app.use(express.static(__dirname + '/public'));
+app.use(express.static('public'));
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
@@ -137,6 +138,7 @@ app.get('/addMission', restrict, function(req, res){
 app.get('/voirMission', restrict, function(req, res){
     res.render('viewMission.ejs');
 });
+
 
 app.get('/profile', restrict, function(req, res){
     res.render('profile.ejs');
