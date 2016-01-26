@@ -5,7 +5,7 @@
 <div class="">
     <div class="page-title margintop45px">
         <div class="title_left">
-            <h3>Détails de la mission - ${mission.mission}</h3>
+            <h3>Détails de la mission - <%= mission.Name %></h3>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -20,52 +20,54 @@
 
                              <!-- INFOS PRINCIPALES -->
 
+                             <% dateMission = new Date(mission.Date); %>
+
                              <div style="font-size:18px;"><strong>Informations principales :</strong></div>
 
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Intitulé </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="name" class="form-control col-md-7 col-xs-12" name="name" type="text" disabled/>
+                                    <input id="name" class="form-control col-md-7 col-xs-12" name="name" type="text" value="<%= mission.Name %>" disabled />
                                 </div>
                             </div>
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="date">Date</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="date" id="date" name="date" disabled class="form-control col-md-7 col-xs-12"/>
+                                    <input type="date" id="date" name="date" disabled class="form-control col-md-7 col-xs-12" value="<%= dateMission.getDate() %>/<%= (dateMission.getMonth()+1) %>/<%= dateMission.getFullYear() %>"/>
                                 </div>
                             </div>
 
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="description">Description</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea id="description" name="description" class="form-control col-md-7 col-xs-12" disabled></textarea>
+                                    <textarea id="description" name="description" class="form-control col-md-7 col-xs-12" disabled><%= mission.Description %></textarea>
                                 </div>
                             </div>
                             
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="conducteur">Utilisateur</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="conducteur" class="form-control col-md-7 col-xs-12" name="conducteur" type="text" disabled />
+                                    <input id="conducteur" class="form-control col-md-7 col-xs-12" name="conducteur" type="text" value="<%= mission.Driver.LastName %> <%= mission.Driver.FirstName %>" disabled />
                                 </div>
                             </div>
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="conducteur">Véhicule</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="vehicule" class="form-control col-md-7 col-xs-12" name="vehicule" type="text" disabled />
+                                    <input id="vehicule" class="form-control col-md-7 col-xs-12" name="vehicule" type="text" value="(<%= mission.Vehicule.Id %>) <%= mission.Vehicule.Brand %> - <%= mission.Vehicule.Model %>" disabled />
                                 </div>
                             </div>
 
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuEnlevement">Lieu d'enlèvement</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="lieuEnlevement" name="lieuEnlevement" class="form-control col-md-7 col-xs-12" disabled />
+                                    <input id="lieuEnlevement" name="lieuEnlevement" class="form-control col-md-7 col-xs-12" value="<%= mission.PickupPlace.Name %>" disabled />
                                 </div>
                             </div>
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuLivraison">Lieu de livraison</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="lieuLivraison" name="lieuLivraison" class="form-control col-md-7 col-xs-12" disabled/>
+                                    <input id="lieuLivraison" name="lieuLivraison" class="form-control col-md-7 col-xs-12" value="<%= mission.DeliveryPlace.Name %>" disabled/>
                                 </div>
                             </div>
                             
@@ -85,18 +87,21 @@
                                         <th>Date </th>
                                         <th>Type étape </th>
                                         <th>Description</th>
-                                        </th>
+                                        <th style="display:none">Position</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
+                                    <% for(var i=0; i < mission.Steps.length; i++) {
+                                        dateEtape = new Date(mission.Steps[i].Date);  %>
                                     <tr class="even pointer">
-                                        <td class="a-center ">1</td>
-                                        <td class=" ">May 23, 2014 11:47:56 PM </td>
-                                        <td class=" ">Démarrage</td>
-                                        <td class=" ">RAS</i>
-                                        </td>
+                                        <td class="a-center "><%=mission.Steps[i].StepNumber%></td>
+                                        <td class=" "><%= dateEtape.getDate() %>/<%= (dateEtape.getMonth()+1) %>/<%= dateEtape.getFullYear() %> <%= dateEtape.getHours()%>:<%= dateEtape.getMinutes()%> </td></td>
+                                        <td class=" "><%=mission.Steps[i].StepTypeDetail.Name%></td>
+                                        <td class=" "><%=mission.Steps[i].Informations%></td>
+                                        <td style="display:none"><%= mission.Steps[i].Position.Latitude %>:<%= mission.Steps[i].Position.Longitude %></td>
                                     </tr>
+                                    <%}%>
                                 </tbody>
                             </table>
 
@@ -128,13 +133,20 @@
                                 </thead>
 
                                 <tbody>
+                                    <% if (mission.Failures.length > 0) { %>
+                                    <% for(var i=0; i < mission.Failures.length; i++) { %>
                                     <tr class="even pointer">
-                                        <td class="a-center ">May 23, 2014 11:47:56 PM </td>
-                                        <td class=" ">MARTIN Michel</td>
-                                        <td class=" ">Corrigée</td>
+                                        <td class="a-center "><%=mission.Failures[i].Date%></td>
+                                        <td class=" "><%= mission.Failures[i].Repairer.LastName %> <%= mission.Failures[i].Repairer.FirstName %></td>
+                                        <td class=" "><%=mission.Failures[i].State%></td>
                                         <td class=" "><a href="#">Voir la fiche associée</a></i>
                                         </td>
                                     </tr>
+                                    <%}}else{%>
+                                    <tr class="even pointer">
+                                        <td colspan="4" style="text-align:center;">Aucune panne détectée.</td>
+                                    </tr> 
+                                    <%}%>
                                 </tbody>
                             </table>
 
@@ -166,13 +178,11 @@
                             </table>
 
 
-                           
-
-
-
-
+    
                             <div class="ln_solid"></div>
+                            <a href="/missions">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                            </a>
                         </form>
 
                         
@@ -187,46 +197,19 @@
 
 <!-- script for map -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIpkq2qmv4bMGXAiwbpnEfyHm-wTnqOc8&callback=initMap" async defer></script>
+<script src="js/page_mission_view.js"></script>
 <script type="text/javascript">
-var map;
-var center = [];
+map = undefined;
+center = [];
   function initMap() {
-    //Liste des étapes
-    var locations = [
-      ['Ingésup', 44.8548213, -0.5669609999999999, 1],
-      ['Gillian', 44.8613528, -0.5643929999999955, 2],
-      ['Maincare Solutions', 44.7826402, -0.6353303999999298, 3],
-      ['Perard Castle', 44.204335, 0.5963481999999658, 4],
-    ];
-    window.map = new google.maps.Map(document.getElementById('mapEtapes'), {
+    googlMap = google.maps;
+    //INIT de base de la map
+    window.map = new googlMap.Map(document.getElementById('mapEtapes'), {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-
-    var infowindow = new google.maps.InfoWindow();
-
-    var bounds = new google.maps.LatLngBounds();
-
-    for (i = 0; i < locations.length; i++) {
-        marker = new google.maps.Marker({
-            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-            map: map,
-        });
-
-        bounds.extend(marker.position);
-
-        google.maps.event.addListener(marker, 'click', (function (marker, i) {
-            return function () {
-                infowindow.setContent(locations[i][0]);
-                infowindow.open(map, marker);
-            }
-        })(marker, i));
-    }
-
+    infowindow = new googlMap.InfoWindow();
+    bounds = new google.maps.LatLngBounds();
     map.fitBounds(bounds);
-
-    var listener = google.maps.event.addListener(map, "idle", function () {
-        google.maps.event.removeListener(listener);
-    });
   }
 </script>
 <%- include('footer') -%>
