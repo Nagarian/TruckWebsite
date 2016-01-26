@@ -1,3 +1,4 @@
+/*
 $(document).ready(function(){
 	API_PATH = "http://cgptruck.azurewebsites.net/";
     mytoken = "Bearer YU5L0EZQfR_SJkeSbWduoQzLL3QBjmlOxqYmtFqLrYZOHMhpb-KJG5rWjLsJfLyN-OQFNZWXjtFnwJLmZ-ZevXHm-MB8MKgb2elHsWmhNf8W8JpJs8CFx5OegkJBtTY0cL1GJvY9Pqz6QiSAclIK0tyR-8B81mW-pxWBxTliRZ3EnWJjLkGw3vVwsqd2xm4OuPpBWBQSTHc-S5BLZjJa8Qjc_YNZ1-roEVdZ5j5SucFYpp-dOBLBTGD6NS7X4vBc_EEtRo6l7TpHIsA42dcSYa5obm0zWsILzrp-Wq0qSHIb8Jada4zNFd4xPlANpdOGlJx9oZ5coX0tYbIB8kkkmBpK2hpyT3_pcKyjGkGhsQE";
@@ -25,10 +26,6 @@ $(document).ready(function(){
 		        
 		        $("table#example tbody").append(element);
 	    	}
-	       	
-		    
-	    
-
 	    },
 
 	    error : function(resultat, statut, erreur){
@@ -39,3 +36,4 @@ $(document).ready(function(){
 	    //}
 	});
 });
+*/

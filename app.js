@@ -28,75 +28,6 @@ app.use(session({
   secret: 'keyboard cat'
 }));   
 
-function getToken(){
-	var token;
-	var postData = querystring.stringify({
-	  'grant_type' : 'password',
-	  'username' : 'hans.herbretzel',
-	  'password' : 'azerty123'
-	});
-
-	var options = {
-	  hostname: 'cgptruck.azurewebsites.net',
-	  path: '/token',
-	  method: 'POST',
-	  headers: {
-	    'Content-Type': 'application/x-www-form-urlencoded',
-	    'Content-Length': postData.length
-	  }
-	};
-
-	var req = http.request(options, (res) => {
-	  //console.log(`STATUS: ${res.statusCode}`);
-	  //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-	  var token;
-	  res.setEncoding('utf8');
-	  res.on('data', (chunk) => {
-	    //console.log(`BODY: ${chunk}`);
-	    token = (JSON.parse(chunk)).access_token;
-	  });
-	  res.on('end', () => {
-	  	//console.log(token);
-	  	getMissions(token);
-	  })
-	});
-
-
-	req.on('error', (e) => {
-	  console.log(`problem with request: ${e.message}`);
-	});
-
-	// write data to request body
-	req.write(postData);
-	req.end();
-}
-
-function getMissions(token){
-
-	var options = {
-	  hostname: 'cgptruck.azurewebsites.net',
-	  path: '/api/missions',
-	  headers: {
-	  	//'Content-Type': 'application/json',
-	    'Authorization': 'Bearer ' + token
-	  },
-	  agent: false  // create a new agent just for this one request
-	}
-
-	http.get(options, function(res){
-		console.log(res.statusCode);
-
-		res.on('data', function(chunk){
-			//console.log(JSON.parse(chunk.toString()));
-			console.log(chunk.toString());
-		});
-
-	}).on('error', function(e){
-		console.log("Error : " + e.message);
-	});
-}
-
-getToken();
 
 // Session-persisted message middleware                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 app.use(function(req, res, next){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
@@ -162,8 +93,38 @@ app.post('/login', function(req, res){
         // Store the user's primary key                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
         // in the session store to be retrieved,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         // or in this case the entire user object                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-        req.session.user = user;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-        res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+        req.session.user = user; 
+        var postData = querystring.stringify({
+          'grant_type' : 'password',
+          'username' : 'hans.herbretzel',
+          'password' : 'azerty123'
+        });
+        var options = {
+          hostname: 'cgptruck.azurewebsites.net',
+          path: '/token',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': postData.length
+          }
+        };
+
+        var req2 = http.request(options, (res2) => {
+          res2.setEncoding('utf8');
+          res2.on('data', (chunk) => {
+            req.session.token = (JSON.parse(chunk)).access_token;
+          });
+          res2.on('end', () => {
+            res.redirect('/');   
+          });
+        });
+        req2.on('error', (e) => {
+          console.log(`problem with request: ${e.message}`);
+        });
+
+        // write data to request body
+        req2.write(postData);
+        req2.end();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
       });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     } else {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
       res.redirect('/login');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
@@ -200,9 +161,37 @@ app.get('/users', restrict, function(req, res){
     res.render('users.ejs');
 });
 
+
+
+
+
 app.get('/missions', restrict, function(req, res){
-    res.render('missions.ejs');
+    //console.log("req.session.token :" + req.session.token );
+    var options = {
+      hostname: 'cgptruck.azurewebsites.net',
+      path: '/api/missions',
+      headers: {
+        //'Content-Type': 'application/json',
+        'Authorization': "Bearer " + req.session.token
+      },
+      agent: false  // create a new agent just for this one request
+    }
+
+    //Requête de récupération des données - missions
+    http.get(options, function(res2){
+      res2.on('data', function(chunk){
+        var data = resolveReferences(JSON.parse(chunk));
+        res.render('missions.ejs', { missions : data });
+      });
+    }).on('error', function(e){
+      console.log("Error : " + e.message);
+      res.render('missions.ejs', { missions : "" });
+    });
+    
 });
+
+
+
 app.get('/addMission', restrict, function(req, res){
     res.render('addMission.ejs');
 });
@@ -218,3 +207,54 @@ app.get('/profile', restrict, function(req, res){
 app.listen(app.get('port'), function() {
 	console.log("Server is running on port " + 4000);
 });
+
+
+
+// Permet de résoudre les dépendances du JSON
+function resolveReferences(json) {
+    if (typeof json === 'string')
+        json = JSON.parse(json);
+
+    var byid = {}, // all objects by id
+        refs = []; // references to objects that could not be resolved
+    json = (function recurse(obj, prop, parent) {
+        if (typeof obj !== 'object' || !obj) // a primitive value
+            return obj;
+        if (Object.prototype.toString.call(obj) === '[object Array]') {
+            for (var i = 0; i < obj.length; i++)
+                // check also if the array element is not a primitive value
+                if (typeof obj[i] !== 'object' || !obj[i]) // a primitive value
+                    continue;
+                else if ("$ref" in obj[i])
+                    obj[i] = recurse(obj[i], i, obj);
+                else
+                    obj[i] = recurse(obj[i], prop, obj);
+            return obj;
+        }
+        if ("$ref" in obj) { // a reference
+            var ref = obj.$ref;
+            if (ref in byid)
+                return byid[ref];
+            // else we have to make it lazy:
+            refs.push([parent, prop, ref]);
+            return;
+        } else if ("$id" in obj) {
+            var id = obj.$id;
+            delete obj.$id;
+            if ("$values" in obj) // an array
+                obj = obj.$values.map(recurse);
+            else // a plain object
+                for (var prop in obj)
+                    obj[prop] = recurse(obj[prop], prop, obj);
+            byid[id] = obj;
+        }
+        return obj;
+    })(json); // run it!
+
+    for (var i = 0; i < refs.length; i++) { // resolve previously unknown references
+        var ref = refs[i];
+        ref[0][ref[1]] = byid[ref[2]];
+        // Notice that this throws if you put in a reference at top-level
+    }
+    return json;
+}
