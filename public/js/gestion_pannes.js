@@ -9,8 +9,8 @@ $(window).load(function(){
 	];
 
 	//Appel de la méthode de récupération des pannes / 10 secondes
-    //setInterval(getPannesFromJSON, 10000);
-    //getPannesFromJSON();
+    setInterval(getPannesFromJSON, 10000);
+    getPannesFromJSON();
 
     //Clic pour la pop-up
     $("#envoiReparateurBTN").click(function(){
@@ -19,24 +19,23 @@ $(window).load(function(){
 });
 
 function getPannesFromJSON(){
+	API_PATH = "http://cgptruck.azurewebsites.net/";
+    mytoken = "Bearer " + $("#spanToken").text();
 	$.ajax({
-	    url : '/listePannes',
+	    url : API_PATH + 'api/Failures/declared',
+	    headers: {
+	        'Authorization': mytoken
+	    },
 	    type : 'GET',
 	    dataType : 'html',
-	    success : function(code_html, statut){
-	       	supprimerBillets();
+	    success : function(resultat, statut){
+	    	console.log("/!\\ Récupération des pannes");
+	       	//supprimerBillets();
 	       	//FAKE : traitement du résultat => Transformation en tableau de pannes
-			gestionBillets();
+			//gestionBillets();
 	    },
 
 	    error : function(resultat, statut, erreur){
-	    },
-
-	    complete : function(resultat, statut){
-	   		console.log("/!\\ Récupération des pannes");
-	   		supprimerBillets();
-	       	//FAKE : traitement du résultat => Transformation en tableau de pannes
-			gestionBillets();
 	    }
 	});
 }
