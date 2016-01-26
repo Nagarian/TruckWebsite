@@ -9,8 +9,8 @@ $(window).load(function(){
 	];
 
 	//Appel de la méthode de récupération des pannes / 10 secondes
-    setInterval(getPannesFromJSON, 10000);
-    getPannesFromJSON();
+    //setInterval(getPannesFromJSON, 10000);
+    //getPannesFromJSON();
 
     //Clic pour la pop-up
     $("#envoiReparateurBTN").click(function(){
