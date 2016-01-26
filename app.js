@@ -146,19 +146,19 @@ app.get('/', restrict, function(req, res){
 	    methodName: 'GetMissionOfDriver(1)' // Func<object,Task<object>>
 	}});
 	*/
-    res.render('index.ejs');
+    res.render('index.ejs', { _tokenuser : req.session.token });
 });
 
 app.get('/vehicules', restrict, function(req, res){
-    res.render('vehicules.ejs');
+    res.render('vehicules.ejs', { _tokenuser : req.session.token });
 });
 
 app.get('/establishments', restrict, function(req, res){
-    res.render('establishments.ejs');
+    res.render('establishments.ejs', { _tokenuser : req.session.token });
 });
 
 app.get('/users', restrict, function(req, res){
-    res.render('users.ejs');
+    res.render('users.ejs', { _tokenuser : req.session.token });
 });
 
 
@@ -181,11 +181,11 @@ app.get('/missions', restrict, function(req, res){
     http.get(options, function(res2){
       res2.on('data', function(chunk){
         var data = resolveReferences(JSON.parse(chunk));
-        res.render('missions.ejs', { missions : data });
+        res.render('missions.ejs', { missions : data, _tokenuser : req.session.token });
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('missions.ejs', { missions : "" });
+      res.render('missions.ejs', { missions : "", _tokenuser : req.session.token });
     });
     
 });
@@ -193,15 +193,39 @@ app.get('/missions', restrict, function(req, res){
 
 
 app.get('/addMission', restrict, function(req, res){
-    res.render('addMission.ejs');
+    res.render('addMission.ejs', { _tokenuser : req.session.token });
 });
-app.get('/voirMission', restrict, function(req, res){
-    res.render('viewMission.ejs');
+
+app.get('/voirMission-*', restrict, function(req, res){
+  var idMission = req.originalUrl.split("-")[1]
+  if ( idMission != ""){
+    //console.log("req.session.token :" + req.session.token );
+    var options = {
+      hostname: 'cgptruck.azurewebsites.net',
+      path: '/api/missions/'+idMission,
+      headers: {
+        //'Content-Type': 'application/json',
+        'Authorization': "Bearer " + req.session.token
+      },
+      agent: false  // create a new agent just for this one request
+    }
+
+    //Requête de récupération des données - détail d'une mission
+    http.get(options, function(res2){
+      res2.on('data', function(chunk){
+        var data = resolveReferences(JSON.parse(chunk));
+        res.render('viewMission.ejs', { mission : data, _tokenuser : req.session.token});
+      });
+    }).on('error', function(e){
+      console.log("Error : " + e.message);
+      res.render('/', { _tokenuser : req.session.token });
+    });
+  }
 });
 
 
 app.get('/profile', restrict, function(req, res){
-    res.render('profile.ejs');
+    res.render('profile.ejs', { _tokenuser : req.session.token });
 });
 
 app.listen(app.get('port'), function() {
@@ -257,4 +281,20 @@ function resolveReferences(json) {
         // Notice that this throws if you put in a reference at top-level
     }
     return json;
+}
+
+function censor(censor) {
+  var i = 0;
+
+  return function(key, value) {
+    if(i !== 0 && typeof(censor) === 'object' && typeof(value) == 'object' && censor == value) 
+      return '[Circular]'; 
+
+    if(i >= 300) // seems to be a harded maximum of 30 serialized objects?
+      return '[Unknown]';
+
+    ++i; // so we know we aren't using the original object anymore
+
+    return value;  
+  }
 }
