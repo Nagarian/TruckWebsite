@@ -5,7 +5,10 @@ var session = require('express-session');
 var hash = require('./pass').hash;
 var bodyParser = require('body-parser');
 var ffi = require('ffi');
+var http = require('http');
+var querystring = require('querystring');
 
+var data;
 var app = express();
 
 
@@ -14,7 +17,6 @@ app.use(express.static('public'));
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-
 
 
 app.use(bodyParser.urlencoded({
@@ -26,6 +28,75 @@ app.use(session({
   secret: 'keyboard cat'
 }));   
 
+function getToken(){
+	var token;
+	var postData = querystring.stringify({
+	  'grant_type' : 'password',
+	  'username' : 'hans.herbretzel',
+	  'password' : 'azerty123'
+	});
+
+	var options = {
+	  hostname: 'cgptruck.azurewebsites.net',
+	  path: '/token',
+	  method: 'POST',
+	  headers: {
+	    'Content-Type': 'application/x-www-form-urlencoded',
+	    'Content-Length': postData.length
+	  }
+	};
+
+	var req = http.request(options, (res) => {
+	  //console.log(`STATUS: ${res.statusCode}`);
+	  //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+	  var token;
+	  res.setEncoding('utf8');
+	  res.on('data', (chunk) => {
+	    //console.log(`BODY: ${chunk}`);
+	    token = (JSON.parse(chunk)).access_token;
+	  });
+	  res.on('end', () => {
+	  	//console.log(token);
+	  	getMissions(token);
+	  })
+	});
+
+
+	req.on('error', (e) => {
+	  console.log(`problem with request: ${e.message}`);
+	});
+
+	// write data to request body
+	req.write(postData);
+	req.end();
+}
+
+function getMissions(token){
+
+	var options = {
+	  hostname: 'cgptruck.azurewebsites.net',
+	  path: '/api/missions',
+	  headers: {
+	  	//'Content-Type': 'application/json',
+	    'Authorization': 'Bearer ' + token
+	  },
+	  agent: false  // create a new agent just for this one request
+	}
+
+	http.get(options, function(res){
+		console.log(res.statusCode);
+
+		res.on('data', function(chunk){
+			//console.log(JSON.parse(chunk.toString()));
+			console.log(chunk.toString());
+		});
+
+	}).on('error', function(e){
+		console.log("Error : " + e.message);
+	});
+}
+
+getToken();
 
 // Session-persisted message middleware                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 app.use(function(req, res, next){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
