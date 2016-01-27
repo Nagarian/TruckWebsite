@@ -72,9 +72,9 @@ function authenticate(name, pass, fn) {
 function authenticate(email, password, token, fn) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
   if(email != undefined && password != undefined && token != undefined){
   	var user = {};
-  	user.email = this.email;
-  	user.password = this.password;
-  	user.token = this.token;
+  	user.email = email;
+  	user.password = password;
+  	user.token = token;
   	return fn(null, user)
   }
   else return fn("Identifiants incorrects", null);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -122,7 +122,7 @@ app.get('/login', function(req, res){
         var req2 = http.request(options, (res2) => {
           res2.setEncoding('utf8');
           res2.on('data', (chunk) => {
-            req.session.token = (JSON.parse(chunk)).access_token;
+            req.session.user.token = (JSON.parse(chunk)).access_token;
           });
           res2.on('end', () => {
             res.redirect('/');   
@@ -144,7 +144,9 @@ app.get('/login', function(req, res){
 
 app.post('/login', function(req, res){ 
 
-	var postData = querystring.stringify({
+		var token;
+
+		var postData = querystring.stringify({
           'grant_type' : 'password',
           'username' : req.body.email,
           'password' : req.body.password
@@ -162,11 +164,11 @@ app.post('/login', function(req, res){
         var req2 = http.request(options, (res2) => {
           res2.setEncoding('utf8');
           res2.on('data', (chunk) => {
-            req.session.token = (JSON.parse(chunk)).access_token;
+            token = (JSON.parse(chunk)).access_token;
           });
           res2.on('end', () => {
-	      	  authenticate(req.body.email, req.body.password, req.session.token,function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-			    if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+	      	  authenticate(req.body.email, req.body.password, token,function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+			    if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 			      req.session.regenerate(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 			        req.session.user = user;
 			       	res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
@@ -194,19 +196,19 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/', restrict, function(req, res){
-    res.render('index.ejs', { _tokenuser : req.session.token });
+    res.render('index.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/vehicules', restrict, function(req, res){
-    res.render('vehicules.ejs', { _tokenuser : req.session.token });
+    res.render('vehicules.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/establishments', restrict, function(req, res){
-    res.render('establishments.ejs', { _tokenuser : req.session.token });
+    res.render('establishments.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/users', restrict, function(req, res){
-    res.render('users.ejs', { _tokenuser : req.session.token });
+    res.render('users.ejs', { _tokenuser : req.session.user.token });
 });
 
 
@@ -214,26 +216,27 @@ app.get('/users', restrict, function(req, res){
 
 
 app.get('/missions', restrict, function(req, res){
-    //console.log("req.session.token :" + req.session.token );
+    //console.log("req.session.user.token :" + req.session.user.token );
     var options = {
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/missions',
       headers: {
         //'Content-Type': 'application/json',
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false  // create a new agent just for this one request
     }
+    console.log(req.session.user);
 
     //Requête de récupération des données - missions
     http.get(options, function(res2){
       res2.on('data', function(chunk){
         var data = resolveReferences(JSON.parse(chunk));
-        res.render('missions.ejs', { missions : data, _tokenuser : req.session.token });
+        res.render('missions.ejs', { missions : data, _tokenuser : req.session.user.token });
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('missions.ejs', { missions : "", _tokenuser : req.session.token });
+      res.render('missions.ejs', { missions : "", _tokenuser : req.session.user.token });
     });
     
 });
@@ -245,7 +248,7 @@ app.get('/addMission', restrict, function(req, res){
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/Users/drivers',
       headers: {
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false 
     };
@@ -275,7 +278,7 @@ app.get('/addMission', restrict, function(req, res){
                     resClients.on('data', function(chunk){
                       clients = resolveReferences(JSON.parse(chunk));
                       res.render('addMission.ejs',{ 
-                        _tokenuser : req.session.token,
+                        _tokenuser : req.session.user.token,
                         _drivers : drivers ,
                         _vehicules : vehicules ,
                         _warehouses : warehouses,
@@ -284,22 +287,22 @@ app.get('/addMission', restrict, function(req, res){
                     });
                   }).on('error', function(e){
                     console.log("Error : " + e.message);
-                    res.render('/', { _tokenuser : req.session.token });
+                    res.render('/', { _tokenuser : req.session.user.token });
                   });
                 });
               }).on('error', function(e){
                 console.log("Error : " + e.message);
-                res.render('/', { _tokenuser : req.session.token });
+                res.render('/', { _tokenuser : req.session.user.token });
               });
             });
           }).on('error', function(e){
             console.log("Error : " + e.message);
-            res.render('/', { _tokenuser : req.session.token });
+            res.render('/', { _tokenuser : req.session.user.token });
           });
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('/', { _tokenuser : req.session.token });
+      res.render('/', { _tokenuser : req.session.user.token });
     });
     
 });
@@ -307,13 +310,13 @@ app.get('/addMission', restrict, function(req, res){
 app.get('/voirMission-*', restrict, function(req, res){
   var idMission = req.originalUrl.split("-")[1]
   if ( idMission != ""){
-    //console.log("req.session.token :" + req.session.token );
+    //console.log("req.session.user.token :" + req.session.user.token );
     var options = {
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/missions/'+idMission,
       headers: {
         //'Content-Type': 'application/json',
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false  // create a new agent just for this one request
     }
@@ -322,18 +325,18 @@ app.get('/voirMission-*', restrict, function(req, res){
     http.get(options, function(res2){
       res2.on('data', function(chunk){
         var data = resolveReferences(JSON.parse(chunk));
-        res.render('viewMission.ejs', { mission : data, _tokenuser : req.session.token});
+        res.render('viewMission.ejs', { mission : data, _tokenuser : req.session.user.token});
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('/', { _tokenuser : req.session.token });
+      res.render('/', { _tokenuser : req.session.user.token });
     });
   }
 });
 
 
 app.get('/profile', restrict, function(req, res){
-    res.render('profile.ejs', { _tokenuser : req.session.token });
+    res.render('profile.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.listen(app.get('port'), function() {
