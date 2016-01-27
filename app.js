@@ -4,11 +4,9 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var hash = require('./pass').hash;
 var bodyParser = require('body-parser');
-var ffi = require('ffi');
 var http = require('http');
 var querystring = require('querystring');
 
-var data;
 var app = express();
 
 
@@ -42,7 +40,7 @@ app.use(function(req, res, next){
 });  
 
 // dummy database                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-var users = {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+/*var users = {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   test: { name: 'test' }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -69,7 +67,19 @@ function authenticate(name, pass, fn) {
     if (hash.toString() == user.hash) return fn(null, user);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     fn(new Error('invalid password'));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+}*/
+
+function authenticate(email, password, token, fn) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  if(email != undefined && password != undefined && token != undefined){
+  	var user = {};
+  	user.email = email;
+  	user.password = password;
+  	user.token = token;
+  	return fn(null, user)
+  }
+  else return fn("Identifiants incorrects", null);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+}
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 function restrict(req, res, next) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
   if (req.session.user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
@@ -84,7 +94,7 @@ app.get('/login', function(req, res){
     res.render('login.ejs');
 });
 
-app.post('/login', function(req, res){   
+/*app.post('/login', function(req, res){   
   authenticate(req.body.email, req.body.password, function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
       // Regenerate session when signing in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -112,7 +122,7 @@ app.post('/login', function(req, res){
         var req2 = http.request(options, (res2) => {
           res2.setEncoding('utf8');
           res2.on('data', (chunk) => {
-            req.session.token = (JSON.parse(chunk)).access_token;
+            req.session.user.token = (JSON.parse(chunk)).access_token;
           });
           res2.on('end', () => {
             res.redirect('/');   
@@ -130,7 +140,54 @@ app.post('/login', function(req, res){
       res.redirect('/login');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
   });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+});*/
+
+app.post('/login', function(req, res){ 
+
+		var token;
+
+		var postData = querystring.stringify({
+          'grant_type' : 'password',
+          'username' : req.body.email,
+          'password' : req.body.password
+        });
+        var options = {
+          hostname: 'cgptruck.azurewebsites.net',
+          path: '/token',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': postData.length
+          }
+        };
+
+        var req2 = http.request(options, (res2) => {
+          res2.setEncoding('utf8');
+          res2.on('data', (chunk) => {
+            token = (JSON.parse(chunk)).access_token;
+          });
+          res2.on('end', () => {
+	      	  authenticate(req.body.email, req.body.password, token,function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+			    if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+			      req.session.regenerate(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+			        req.session.user = user;
+			       	res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+			      });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+			    } else {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+			      res.redirect('/login');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+			    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+			  });  
+          });
+        });
+        req2.on('error', (e) => {
+          console.log(`problem with request: ${e.message}`);
+        });
+
+        // write data to request body
+        req2.write(postData);
+     req2.end();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 });
+
 
 app.get('/logout', function(req, res){
   req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
@@ -139,26 +196,19 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/', restrict, function(req, res){
-	/*
-	api.func({
-	    assemblyFile: 'CGPTruck.WebAPI.dll',
-	    typeName: 'CGPTruck.WebAPI.BLL.BLLMissions',
-	    methodName: 'GetMissionOfDriver(1)' // Func<object,Task<object>>
-	}});
-	*/
-    res.render('index.ejs', { _tokenuser : req.session.token });
+    res.render('index.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/vehicules', restrict, function(req, res){
-    res.render('vehicules.ejs', { _tokenuser : req.session.token });
+    res.render('vehicules.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/establishments', restrict, function(req, res){
-    res.render('establishments.ejs', { _tokenuser : req.session.token });
+    res.render('establishments.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.get('/users', restrict, function(req, res){
-    res.render('users.ejs', { _tokenuser : req.session.token });
+    res.render('users.ejs', { _tokenuser : req.session.user.token });
 });
 
 
@@ -166,26 +216,27 @@ app.get('/users', restrict, function(req, res){
 
 
 app.get('/missions', restrict, function(req, res){
-    //console.log("req.session.token :" + req.session.token );
+    //console.log("req.session.user.token :" + req.session.user.token );
     var options = {
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/missions',
       headers: {
         //'Content-Type': 'application/json',
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false  // create a new agent just for this one request
     }
+    console.log(req.session.user);
 
     //Requête de récupération des données - missions
     http.get(options, function(res2){
       res2.on('data', function(chunk){
         var data = resolveReferences(JSON.parse(chunk));
-        res.render('missions.ejs', { missions : data, _tokenuser : req.session.token });
+        res.render('missions.ejs', { missions : data, _tokenuser : req.session.user.token });
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('missions.ejs', { missions : "", _tokenuser : req.session.token });
+      res.render('missions.ejs', { missions : "", _tokenuser : req.session.user.token });
     });
     
 });
@@ -197,7 +248,7 @@ app.get('/addMission', restrict, function(req, res){
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/Users/drivers',
       headers: {
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false 
     };
@@ -227,7 +278,7 @@ app.get('/addMission', restrict, function(req, res){
                     resClients.on('data', function(chunk){
                       clients = resolveReferences(JSON.parse(chunk));
                       res.render('addMission.ejs',{ 
-                        _tokenuser : req.session.token,
+                        _tokenuser : req.session.user.token,
                         _drivers : drivers ,
                         _vehicules : vehicules ,
                         _warehouses : warehouses,
@@ -236,22 +287,22 @@ app.get('/addMission', restrict, function(req, res){
                     });
                   }).on('error', function(e){
                     console.log("Error : " + e.message);
-                    res.render('/', { _tokenuser : req.session.token });
+                    res.render('/', { _tokenuser : req.session.user.token });
                   });
                 });
               }).on('error', function(e){
                 console.log("Error : " + e.message);
-                res.render('/', { _tokenuser : req.session.token });
+                res.render('/', { _tokenuser : req.session.user.token });
               });
             });
           }).on('error', function(e){
             console.log("Error : " + e.message);
-            res.render('/', { _tokenuser : req.session.token });
+            res.render('/', { _tokenuser : req.session.user.token });
           });
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('/', { _tokenuser : req.session.token });
+      res.render('/', { _tokenuser : req.session.user.token });
     });
     
 });
@@ -259,13 +310,13 @@ app.get('/addMission', restrict, function(req, res){
 app.get('/voirMission-*', restrict, function(req, res){
   var idMission = req.originalUrl.split("-")[1]
   if ( idMission != ""){
-    //console.log("req.session.token :" + req.session.token );
+    //console.log("req.session.user.token :" + req.session.user.token );
     var options = {
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/missions/'+idMission,
       headers: {
         //'Content-Type': 'application/json',
-        'Authorization': "Bearer " + req.session.token
+        'Authorization': "Bearer " + req.session.user.token
       },
       agent: false  // create a new agent just for this one request
     }
@@ -274,18 +325,18 @@ app.get('/voirMission-*', restrict, function(req, res){
     http.get(options, function(res2){
       res2.on('data', function(chunk){
         var data = resolveReferences(JSON.parse(chunk));
-        res.render('viewMission.ejs', { mission : data, _tokenuser : req.session.token});
+        res.render('viewMission.ejs', { mission : data, _tokenuser : req.session.user.token});
       });
     }).on('error', function(e){
       console.log("Error : " + e.message);
-      res.render('/', { _tokenuser : req.session.token });
+      res.render('/', { _tokenuser : req.session.user.token });
     });
   }
 });
 
 
 app.get('/profile', restrict, function(req, res){
-    res.render('profile.ejs', { _tokenuser : req.session.token });
+    res.render('profile.ejs', { _tokenuser : req.session.user.token });
 });
 
 app.listen(app.get('port'), function() {
