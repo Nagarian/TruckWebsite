@@ -6,8 +6,8 @@ $(window).load(function(){
 		{'nom': 'Maincare Solutions', 'type':'propReparateurs', 'position': [44.7826402, -0.6353303999999298] },
 		{'nom': 'Perard Castle', 'type':'propLieuGarage', 'position': [44.204335, 0.5963481999999658] }
 	];
-	
-	markers = [];
+	API_PATH = "http://cgptruck.azurewebsites.net/";
+	markers = []; //Pour l'intégralité des données
 	firstLoad = true; //Pour ne modifier le zoom de la map qu'une unique fois
 
 	//Définition du tableau de propriété
@@ -32,6 +32,10 @@ $(window).load(function(){
 		changeVisibilityOfElementsOfType($(this).prop("id"));
 	});
 
+	//Appel de la récupération des lieux
+	//Une fois finie, on récupère les éléments bougeants
+	recupInfosLieux();
+
 	
 	//Appel de la méthode de récupération des infos de la map / 10 secondes
     setInterval(getInfosMapFromJSON, 10000);
@@ -39,44 +43,84 @@ $(window).load(function(){
 
 });
 
+//Récupère les infos des éléments statiques
+//Une fois fini, on récupère les éléments bougeants
+function recupInfosLieux(){
+	mytoken = "Bearer " + $("#spanToken").text();
+	$.ajax({
+	    url : API_PATH + 'api/Places',
+	    headers: {
+	        'Authorization': mytoken
+	    },
+	    type : 'GET',
+	    dataType: 'json',
+	    success : function(resultat, statut){
+	    	var places = resolveReferences(JSON.parse(resultat));
+	    	for (i = 0 ; i < places.length; i++){
+	    		markerTmp = places[i];
+				markerType = getTypeLabelWithTypeId(markerTmp['Place_Type']);
+				marker = new googlMap.Marker({
+			      position: new googlMap.LatLng(
+			      	markerTmp['Position']['Longitude'], markerTmp['Position']['Latitude']),
+			      map: null,
+			      icon: iconesPath + markerType  + ".jpg"
+			    });
+			    markers.push({
+			    	'nom': markerTmp['Name'],
+			    	'type': markerType,
+			    	'marker': marker,
+			    	'persist':true
+				});
+			}
+
+			//Appel de la méthode de récupération des infos de la map / 10 secondes
+		    setInterval(getInfosMapFromJSON, 10000);
+		    getInfosMapFromJSON();
+	    },
+
+	    error : function(resultat, statut, erreur){
+	    	alert("/!\\ Erreur lors de la récupération des pannes");
+	    }
+	});
+}
+
 
 function getInfosMapFromJSON(){
 	$.ajax({
 	    url : '/infosVehiculesLieux',
 	    type : 'GET',
 	    dataType : 'html',
-	    success : function(code_html, statut){
+	    success : function(resultat, statut){
 	       	//FAKE : traitement du résultat => Transformation en tableau de locations
-
+	       	var vehicmap = resolveReferences(JSON.parse(resultat));
+	       	console.log("/!\\ Récupération des infos de la MAP");
+	   		cleanMap();
+	   		turnLocationsIntoMarkers(vehicmap, firstLoad);
 	    },
 
 	    error : function(resultat, statut, erreur){
-	    },
-
-	    complete : function(resultat, statut){
-	   		console.log("/!\\ Récupération des infos de la MAP");
-	   		cleanMap();
-	   		turnLocationsIntoMarkers(firstLoad);
 	    }
 	});
 }
 
 //Transforme les positions en markers + affiche si voulu dans le tableau de props
 //Change la taille de la map en fonction des points
-function turnLocationsIntoMarkers(withBounds) {
-	
-	for (i = 0; i < locations.length; i++) {
-		markerTmp = locations[i];
+function turnLocationsIntoMarkers(vehicmap, withBounds) {
+	for (i = 0; i < vehicmap.length; i++) {
+		markerTmp = vehicmap[i];
+		markerType = getTypeLabelForVehicule(markerTmp['Vehicule_Type']);
 		marker = new googlMap.Marker({
-	      position: new googlMap.LatLng(markerTmp['position'][0], markerTmp['position'][1]),
-	      map: tabProp[markerTmp['type']]? map : null,
-	      icon: iconesPath + markerTmp['type'] + ".jpg"
+	      position: new googlMap.LatLng(
+	      	markerTmp['Position']['Longitude'], markerTmp['Position']['Latitude']),
+	      map: tabProp[markerType]? map : null,
+	      icon: iconesPath + markerType + ".jpg"
 	    });
-	    if (withBounds && tabProp[markerTmp['type']]) bounds.extend(marker.position);
+	    if (withBounds && tabProp[markerType]) bounds.extend(marker.position);
 	    markers.push({
-	    	'nom': markerTmp['nom'],
-	    	'type': markerTmp['type'],
-	    	'marker': marker
+	    	'nom': markerTmp['Name'],
+	    	'type': markerType,
+	    	'marker': marker,
+	    	'persist':false
 		});
 	}
 	if (withBounds) map.fitBounds(bounds);
@@ -96,13 +140,60 @@ function changeVisibilityOfElementsOfType(type) {
   	map.fitBounds(bounds);
 }
 
-//Supprime toutes les infos de la MAP
+
+
+
+//Supprime toutes les infos non-persistées de la MAP
 function cleanMap(){
-	for (var i = 0; i < markers.length; i++) {
-  		markers[i]['marker'].setMap(null);
-  	}
-  	//markers = [];
+  	//On masque puis supprime tous les markers non-persistés
+  	for(var i = markers.length - 1; i >= 0; i--) {
+	    if(markers[i]['persist'] == false) {
+	    	markers[i]['marker'].setMap(null);
+	        markers.splice(i, 1);
+	    }
+	}
 }
+
+//Récupère le label "type d'un lieu" en fonction de son TYpeId
+function getTypeLabelWithTypeId(typeId){
+	var label = "";
+
+	if (typeId == 0){
+		label = "propLieuGarage";
+	} else if (typeId == 1){
+		label = "propLieuEntrepot";
+	} else if (typeId == 2){
+		label = "propLieuCentreRepar";
+	} else if (typeId == 3){
+		label = "propLieuResto";
+	} else if (typeId == 4){
+		label = "propLieuStation";
+	} else { //if (typeId == 5){
+		label = "propLieuClient";
+	} 
+
+	return label;
+}
+
+function getTypeLabelVehicule(typeId){
+	var label = "";
+
+	if (typeId == 0){
+		label = "propReparateurs"; //propReparateursMission
+	} else { //if (typeId == 1){
+		label = "propCamionMission";
+	} 
+	/*
+	'propCamionMission' : true,
+		'propCamionMissionPanne' : true,
+		'propCamionGarage': false,
+		'propReparateurs': true,
+		'propReparateursMission': true,
+	*/
+
+	return label;
+}
+
 
 
 /*

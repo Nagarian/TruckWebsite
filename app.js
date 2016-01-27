@@ -216,17 +216,14 @@ app.get('/users', restrict, function(req, res){
 
 
 app.get('/missions', restrict, function(req, res){
-    //console.log("req.session.user.token :" + req.session.user.token );
     var options = {
       hostname: 'cgptruck.azurewebsites.net',
       path: '/api/missions',
       headers: {
-        //'Content-Type': 'application/json',
         'Authorization': "Bearer " + req.session.user.token
       },
       agent: false  // create a new agent just for this one request
     }
-    console.log(req.session.user);
 
     //Requête de récupération des données - missions
     http.get(options, function(res2){
