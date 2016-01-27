@@ -1,11 +1,4 @@
 $(window).load(function(){
-	//Récupération des infos de la MAP
-	locations = [
-		{'nom': 'Ingésup', 'type':'propCamionMission', 'position': [44.8548213, -0.5669609999999999] },
-		{'nom': 'Gillian', 'type':'propCamionGarage', 'position': [44.8613528, -0.5643929999999955] },
-		{'nom': 'Maincare Solutions', 'type':'propReparateurs', 'position': [44.7826402, -0.6353303999999298] },
-		{'nom': 'Perard Castle', 'type':'propLieuGarage', 'position': [44.204335, 0.5963481999999658] }
-	];
 	API_PATH = "http://cgptruck.azurewebsites.net/";
 	markers = []; //Pour l'intégralité des données
 	firstLoad = true; //Pour ne modifier le zoom de la map qu'une unique fois
@@ -55,13 +48,13 @@ function recupInfosLieux(){
 	    type : 'GET',
 	    dataType: 'json',
 	    success : function(resultat, statut){
-	    	var places = resolveReferences(JSON.parse(resultat));
+	    	var places = resultat;
 	    	for (i = 0 ; i < places.length; i++){
 	    		markerTmp = places[i];
 				markerType = getTypeLabelWithTypeId(markerTmp['Place_Type']);
 				marker = new googlMap.Marker({
 			      position: new googlMap.LatLng(
-			      	markerTmp['Position']['Longitude'], markerTmp['Position']['Latitude']),
+			      	markerTmp['Position']['Latitude'], markerTmp['Position']['Longitude']),
 			      map: null,
 			      icon: iconesPath + markerType  + ".jpg"
 			    });
@@ -74,8 +67,8 @@ function recupInfosLieux(){
 			}
 
 			//Appel de la méthode de récupération des infos de la map / 10 secondes
-		    setInterval(getInfosMapFromJSON, 10000);
-		    getInfosMapFromJSON();
+		    //setInterval(getInfosMapFromJSON, 10000);
+		    //getInfosMapFromJSON();
 	    },
 
 	    error : function(resultat, statut, erreur){
@@ -111,7 +104,7 @@ function turnLocationsIntoMarkers(vehicmap, withBounds) {
 		markerType = getTypeLabelForVehicule(markerTmp['Vehicule_Type']);
 		marker = new googlMap.Marker({
 	      position: new googlMap.LatLng(
-	      	markerTmp['Position']['Longitude'], markerTmp['Position']['Latitude']),
+	      	markerTmp['Position']['Latitude'], markerTmp['Position']['Longitude']),
 	      map: tabProp[markerType]? map : null,
 	      icon: iconesPath + markerType + ".jpg"
 	    });
