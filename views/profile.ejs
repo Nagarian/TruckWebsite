@@ -23,25 +23,26 @@
                                             <div id="crop-avatar">
                                                 <!-- Current avatar -->
                                                 <div class="avatar-view" title="Change the avatar">
-                                                    <img src="images/picture.jpg" alt="Avatar">
+                                                    <img src="images/user_hh.jpg" alt="Avatar">
                                                 </div>
                                             </div>
                                             <!-- end of image cropping -->
 
                                         </div>
-                                        <h3>Hector Robert</h3>
+                                        <h3><%= profile.FirstName %> <%= profile.LastName %></h3>
 
                                         <ul class="list-unstyled user_data">
-                                            <li><i class="fa fa-map-marker user-profile-icon"></i> San Francisco, California, USA
-                                            </li>
-
                                             <li>
-                                                <i class="fa fa-briefcase user-profile-icon"></i> Software Engineer
+                                                <i class="fa fa-briefcase user-profile-icon"></i> 
+                                                <% if (profile.AccountType == 0) { %> Camionneur <% } %>
+                                                <% if (profile.AccountType == 1) { %> Réparateur <% } %>
+                                                <% if (profile.AccountType == 2) { %> Administrateur <% } %>
+                                                <% if (profile.AccountType == 3) { %> Décideur <% } %>
                                             </li>
 
                                             <li class="m-top-xs">
-                                                <i class="fa fa-external-link user-profile-icon"></i>
-                                                <a href="http://www.kimlabs.com/profile/" target="_blank">www.kimlabs.com</a>
+                                                <i class="fa fa-phone user-profile-icon"></i>
+                                                <%= profile.RealPhone %>
                                             </li>
                                         </ul>
 
@@ -57,25 +58,25 @@
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Prénom
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input  type="text" id="first-name" class="form-control col-md-7 col-xs-12" value="Hector" />
+                                                                <input  type="text" id="first-name" class="form-control col-md-7 col-xs-12" value="<%= profile.FirstName %>" />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Nom
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input  type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12" value="ROBERT" />
+                                                                <input  type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12" value="<%= profile.LastName %> " />
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Sexe</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                                 <div id="gender" class="btn-group" data-toggle="buttons">
-                                                                    <label class="btn btn-primary active" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-                                                                        <input type="radio" name="gender" value="male" checked=""> &nbsp; Homme &nbsp;
+                                                                    <label class="btn btn-primary <% if (profile.Sexe) { %> active <% } %>" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                                                        <input type="radio" name="gender" value="male" <% if (profile.Sexe) { %> checked <% } %>> &nbsp; Homme &nbsp;
                                                                     </label>
-                                                                    <label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-                                                                        <input type="radio" name="gender" value="female" >  &nbsp; Femme &nbsp;
+                                                                    <label class="btn btn-default <% if (!profile.Sexe) { %> active <% } %>" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+                                                                        <input type="radio" name="gender" value="female" <% if (!profile.Sexe) { %> checked <% } %>>  &nbsp; Femme &nbsp;
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -84,28 +85,21 @@
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Date de naissance
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input  id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text" value="12/05/1968"/>
+                                                                <input  id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text" value="<%= profile.Birthday %>"/>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Profil</label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                                 <select class="form-control" >
-                                                                    <option selected>Conducteur</option>
-                                                                    <option></option>
+                                                                    <option <% if (profile.AccountType == 0) { %> selected <% } %>>Conducteur</option>
+                                                                    <option <% if (profile.AccountType == 1) { %> selected <% } %>>Réparateur</option>
+                                                                    <option <% if (profile.AccountType == 2) { %> selected <% } %>>Administrateur</option>
+                                                                    <option <% if (profile.AccountType == 3) { %> selected <% } %>>Décideur</option>
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Permis</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="form-control" >
-                                                                    <option selected>Camions/Voitures</option>
-                                                                    <option></option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
+                    
                                                         <div class="divider-dashed"></div>
                                                         <div style="font-size:18px;"><strong>Téléphone</strong></div>
 
@@ -113,26 +107,28 @@
                                                             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone-num">Numéro
                                                             </label>
                                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input  type="text" id="telephone-num" class="form-control col-md-7 col-xs-12" value="09 99 54 99 54" />
+                                                                <input  type="text" id="telephone-num" class="form-control col-md-7 col-xs-12" value="<%= profile.RealPhone %>" />
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone-serie">Modèle - Numéro de série
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <input  type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12" value="HTC Windows Phone 1 - df6s15df6165s1df5sf5s1df6sdf">
-                                                                </input>
+                                                        <% if (profile.RealPhone != null) { %> 
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="telephone-serie">Modèle - Numéro de série
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <input  type="text" id="last-name" name="last-name" required="required" class="form-control col-md-7 col-xs-12" value="HTC Windows Phone 1 - df6s15df6165s1df5sf5s1df6sdf">
+                                                                    </input>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">État</label>
-                                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                                <select class="form-control" >
-                                                                    <option selected>Fonctionnel</option>
-                                                                    <option></option>
-                                                                </select>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3 col-sm-3 col-xs-12">État</label>
+                                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                                    <select class="form-control" >
+                                                                        <option selected>Fonctionnel</option>
+                                                                        <option></option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        <% } %>
                                                     </form>
                                                 </div>
                                             </div>
