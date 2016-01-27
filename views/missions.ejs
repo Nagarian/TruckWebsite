@@ -52,9 +52,8 @@
                                     <td class=''><%= missions[i].Name %></td>
                                     <td class=''>John Blank L</td>
                                     <td class=''><%= missions[i].DeliveryPlace.Name %></td>
-                                    <td class=''><%= missions[i].Steps[missions[i].Steps.length-1].Date %></td>
+                                    <td class=''><%= missions[i].Steps[missions[i].Steps.length-1].StepTypeDetail.Name %></td>
                                     <td class='last'><a href='/voirMission-<%= missions[i].Id %>'>Consulter</a>
-                                    </td>
                                 </tr>
                                 <% } %>
                             </tbody>
