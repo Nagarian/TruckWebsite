@@ -4,11 +4,9 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var hash = require('./pass').hash;
 var bodyParser = require('body-parser');
-var ffi = require('ffi');
 var http = require('http');
 var querystring = require('querystring');
 
-var data;
 var app = express();
 
 
@@ -42,7 +40,7 @@ app.use(function(req, res, next){
 });  
 
 // dummy database                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-var users = {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+/*var users = {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
   test: { name: 'test' }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
@@ -69,7 +67,19 @@ function authenticate(name, pass, fn) {
     if (hash.toString() == user.hash) return fn(null, user);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     fn(new Error('invalid password'));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+}*/
+
+function authenticate(email, password, token, fn) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  if(email != undefined && password != undefined && token != undefined){
+  	var user = {};
+  	user.email = this.email;
+  	user.password = this.password;
+  	user.token = this.token;
+  	return fn(null, user)
+  }
+  else return fn("Identifiants incorrects", null);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+}
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 function restrict(req, res, next) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
   if (req.session.user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
@@ -84,7 +94,7 @@ app.get('/login', function(req, res){
     res.render('login.ejs');
 });
 
-app.post('/login', function(req, res){   
+/*app.post('/login', function(req, res){   
   authenticate(req.body.email, req.body.password, function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
     if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
       // Regenerate session when signing in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -130,7 +140,52 @@ app.post('/login', function(req, res){
       res.redirect('/login');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
   });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+});*/
+
+app.post('/login', function(req, res){ 
+
+	var postData = querystring.stringify({
+          'grant_type' : 'password',
+          'username' : req.body.email,
+          'password' : req.body.password
+        });
+        var options = {
+          hostname: 'cgptruck.azurewebsites.net',
+          path: '/token',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': postData.length
+          }
+        };
+
+        var req2 = http.request(options, (res2) => {
+          res2.setEncoding('utf8');
+          res2.on('data', (chunk) => {
+            req.session.token = (JSON.parse(chunk)).access_token;
+          });
+          res2.on('end', () => {
+	      	  authenticate(req.body.email, req.body.password, req.session.token,function(err, user){                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+			    if (user) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+			      req.session.regenerate(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+			        req.session.user = user;
+			       	res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+			      });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+			    } else {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+			      res.redirect('/login');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+			    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+			  });  
+          });
+        });
+        req2.on('error', (e) => {
+          console.log(`problem with request: ${e.message}`);
+        });
+
+        // write data to request body
+        req2.write(postData);
+     req2.end();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 });
+
 
 app.get('/logout', function(req, res){
   req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
@@ -139,13 +194,6 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/', restrict, function(req, res){
-	/*
-	api.func({
-	    assemblyFile: 'CGPTruck.WebAPI.dll',
-	    typeName: 'CGPTruck.WebAPI.BLL.BLLMissions',
-	    methodName: 'GetMissionOfDriver(1)' // Func<object,Task<object>>
-	}});
-	*/
     res.render('index.ejs', { _tokenuser : req.session.token });
 });
 
