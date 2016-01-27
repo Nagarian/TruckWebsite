@@ -193,7 +193,67 @@ app.get('/missions', restrict, function(req, res){
 
 
 app.get('/addMission', restrict, function(req, res){
-    res.render('addMission.ejs', { _tokenuser : req.session.token });
+    var options = {
+      hostname: 'cgptruck.azurewebsites.net',
+      path: '/api/Users/drivers',
+      headers: {
+        'Authorization': "Bearer " + req.session.token
+      },
+      agent: false 
+    };
+    var drivers;
+    var vehicules;
+    var warehouses;
+    var clients;
+
+    //Requêtes de récupération des données pour les select
+    //Dans l'ordre : Driver, Vehicules, Entrepots, Clients.
+    http.get(options, function(resDrivers){
+      resDrivers.on('data', function(chunk){
+        drivers = resolveReferences(JSON.parse(chunk));
+        
+          options["path"] = "/api/Vehicules/truck";
+          http.get(options, function(resVehicules){
+            resVehicules.on('data', function(chunk){
+              vehicules = resolveReferences(JSON.parse(chunk));
+              
+              options["path"] = "/api/Places/warehouses";
+              http.get(options, function(resWarehouses){
+                resWarehouses.on('data', function(chunk){
+                  warehouses = resolveReferences(JSON.parse(chunk));
+                  
+                  options["path"] = "/api/Places/clients";
+                  http.get(options, function(resClients){
+                    resClients.on('data', function(chunk){
+                      clients = resolveReferences(JSON.parse(chunk));
+                      res.render('addMission.ejs',{ 
+                        _tokenuser : req.session.token,
+                        _drivers : drivers ,
+                        _vehicules : vehicules ,
+                        _warehouses : warehouses,
+                        _clients : clients
+                      });
+                    });
+                  }).on('error', function(e){
+                    console.log("Error : " + e.message);
+                    res.render('/', { _tokenuser : req.session.token });
+                  });
+                });
+              }).on('error', function(e){
+                console.log("Error : " + e.message);
+                res.render('/', { _tokenuser : req.session.token });
+              });
+            });
+          }).on('error', function(e){
+            console.log("Error : " + e.message);
+            res.render('/', { _tokenuser : req.session.token });
+          });
+      });
+    }).on('error', function(e){
+      console.log("Error : " + e.message);
+      res.render('/', { _tokenuser : req.session.token });
+    });
+    
 });
 
 app.get('/voirMission-*', restrict, function(req, res){

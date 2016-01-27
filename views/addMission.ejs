@@ -17,79 +17,84 @@
                         <form class="form-horizontal form-label-left">
 
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Intitulé <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_name">Intitulé <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input id="name" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" required="required" type="text">
+                                    <input id="form_name" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="2" name="name" required="required" type="text">
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="description">Description <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_description">Description <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea id="description" required="required" name="description" class="form-control col-md-7 col-xs-12"></textarea>
+                                    <textarea id="form_description" required="required" name="description" class="form-control col-md-7 col-xs-12"></textarea>
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="date">Date <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_date">Date <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="date" id="date" name="date" required="required" class="form-control col-md-7 col-xs-12">
+                                    <input type="date" id="form_date" name="date" required="required" class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="conducteur">Utilisateur <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_driver">Utilisateur <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select id="conducteur" name="conducteur" required="required" class="form-control col-md-7 col-xs-12">
-                                        <option value="1">ROBERT Hector</option>
-                                        <option value="2">DUPONT Louis</option>
+                                    <select id="form_driver" name="conducteur" required="required" class="form-control col-md-7 col-xs-12">
+                                    <% for(var i=0; i < _drivers.length; i++) { %>
+                                        <option value='<%= _drivers[i].Id %>'><%=_drivers[i].FirstName%> <%=_drivers[i].LastName%></option>
+                                    <%}%>
                                     </select>
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Véhicule <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_vehicule">Véhicule <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select id="vehicule" name="vehicule" required="required" class="form-control col-md-7 col-xs-12">
-                                    	<option value="1">Camion 575859866</option>
-                                    	<option value="2">Camion 454865959</option>
+                                    <select id="form_vehicule" name="vehicule" required="required" class="form-control col-md-7 col-xs-12">
+                                    <% for(var i=0; i < _vehicules.length; i++) { %>
+                                        <option value='<%= _vehicules[i].Id %>'><%= _vehicules[i].Brand %> - <%= _vehicules[i].Model %></option>
+                                    <%}%>
                                     </select>
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuEnlevement">Lieu d'enlèvement <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_enlevement">Lieu d'enlèvement <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select id="lieuEnlevement" name="lieuEnlevement" required="required" class="form-control col-md-7 col-xs-12">
-                                    	<option value="1">4 voie Romaine 33600 Canéjan, France</option>
+                                    <select id="form_enlevement" name="form_enlevement" required="required" class="form-control col-md-7 col-xs-12">
+                                    	<% for(var i=0; i < _warehouses.length; i++) { %>
+                                            <option value='<%= _warehouses[i].Id %>'><%= _warehouses[i].Name %></option>
+                                        <%}%>
                                     </select>
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="lieuLivraison">Lieu de livraison <span class="required">*</span>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="form_livraison">Lieu de livraison <span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <select id="lieuLivraison" name="lieuLivraison" required="required" class="form-control col-md-7 col-xs-12">
-                                    	<option value="1">21 rue de Leybardie 33300 Bordeaux, France</option>
-                                    	<option value="2">89 quai des Chartrons 33300 Bordeaux, France</option>
+                                    <select id="form_livraison" name="form_livraison" required="required" class="form-control col-md-7 col-xs-12">
+                                    	<% for(var i=0; i < _clients.length; i++) { %>
+                                            <option value='<%= _clients[i].Id %>'><%= _clients[i].Name %></option>
+                                        <%}%>
                                     </select>
                                 </div>
                             </div>
                             <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pieceJointe">Pièce jointe <span class="required">*</span>
-                                </label>
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="pieceJointe">Pièce jointe</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input type="file" id="pieceJointe" name="pieceJointe" required="required" class="form-control col-md-7 col-xs-12">
+                                    <input type="file" id="pieceJointe" name="pieceJointe" class="form-control col-md-7 col-xs-12">
                                 </div>
                             </div>
                             <div class="ln_solid"></div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-3">
-                                    <button id="send" type="submit" class="btn btn-success">Ajouter</button>
-                                </div>
-                            </div>
                         </form>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-3">
+                                <button id="postMission" class="btn btn-success">Ajouter la mission</button>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -97,4 +102,6 @@
         </div>
     </div>
 </div>
+
+<script src="js/page_mission_ajout.js"></script>
 <%- include('footer') -%>
