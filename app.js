@@ -333,7 +333,29 @@ app.get('/voirMission-*', restrict, function(req, res){
 
 
 app.get('/profile', restrict, function(req, res){
-    res.render('profile.ejs', { _tokenuser : req.session.user.token });
+
+	 var options = {
+      hostname: 'cgptruck.azurewebsites.net',
+      path: '/api/Account/Me',
+      headers: {
+        //'Content-Type': 'application/json',
+        'Authorization': "Bearer " + req.session.user.token
+      },
+      agent: false  // create a new agent just for this one request
+    }
+
+    //Requête de récupération des données - missions
+    http.get(options, function(res2){
+      res2.on('data', function(chunk){
+        var data = resolveReferences(JSON.parse(chunk));
+        console.log(data);
+        res.render('profile.ejs', { profile : data, _tokenuser : req.session.user.token });
+      });
+    }).on('error', function(e){
+      console.log("Error : " + e.message);
+      res.render('profile.ejs', { profile : "", _tokenuser : req.session.user.token });
+    });
+
 });
 
 app.listen(app.get('port'), function() {
