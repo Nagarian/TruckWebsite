@@ -157,7 +157,11 @@ function postEnvoiReparateur(){
 				alert("Le technicien renseigné a été prévenu.");
 			},
 			error : function(resultat, statut, erreur){
-				alert("Une erreur est survenue. Veuillez réessayer plus tard");
+				if (statut == "parsererror"){
+					alert("Le technicien renseigné a été prévenu.");
+				} else {
+					alert("Une erreur est survenue. Veuillez réessayer plus tard");
+				}
 			},
 			complete : function(resultat, statut){
 				//Fermeture de la pop-up => click sur "Annuler"
