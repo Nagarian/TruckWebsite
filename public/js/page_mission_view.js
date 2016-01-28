@@ -1,6 +1,7 @@
 $(window).load(function(){
 	//Récupération des infos de la MAP
 	locations = [];
+    positions = [];
 	buildArrayWithEtapes();
     turnLocationsIntoMarkers();
 });
@@ -9,6 +10,7 @@ $(window).load(function(){
 function buildArrayWithEtapes(){
 	$("#tableEtapes tbody tr").each(function(){
 		var position = $(this).find("td:nth-child(5)").text().split(":");
+        gestionDecalagePointsMap(position);
 		locations.push({
 	    	"name" : $(this).find("td:nth-child(3)").text(),
 	    	"num" : $(this).find("td:nth-child(1)").text(),
@@ -42,4 +44,15 @@ function turnLocationsIntoMarkers() {
     var listener = googlMap.event.addListener(map, "idle", function () {
         googlMap.event.removeListener(listener);
     });
+}
+
+function gestionDecalagePointsMap(position){
+    if (locations.length > 0){
+        for (i = 0; i < locations.length; i++){
+            if ( locations[i]["lat"] == position[0] && locations[i]["long"] == position[1] ){
+                position[0] = parseFloat(position[0]) + 0.00002;
+                position[1] = parseFloat(position[1]) + 0.00002;
+            }
+        }
+    }
 }
