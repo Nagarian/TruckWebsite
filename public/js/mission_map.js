@@ -29,11 +29,6 @@ $(window).load(function(){
 	//Une fois finie, on récupère les éléments bougeants
 	recupInfosLieux();
 
-	
-	//Appel de la méthode de récupération des infos de la map / 10 secondes
-    setInterval(getInfosMapFromJSON, 10000);
-    getInfosMapFromJSON();
-
 });
 
 //Récupère les infos des éléments statiques
@@ -48,7 +43,7 @@ function recupInfosLieux(){
 	    type : 'GET',
 	    dataType: 'json',
 	    success : function(resultat, statut){
-	    	var places = resultat;
+	    	var places = resolveReferences(resultat);
 	    	for (i = 0 ; i < places.length; i++){
 	    		markerTmp = places[i];
 				markerType = getTypeLabelWithTypeId(markerTmp['Place_Type']);
@@ -65,10 +60,19 @@ function recupInfosLieux(){
 			    	'persist':true
 				});
 			}
+			//Ajout des labels
+			for (i = 0 ; i < markers.length; i++){
+				googlMap.event.addListener(markers[i]["marker"], 'click', (function (marker, i) {
+		            return function () {
+		                infowindow.setContent(markers[i]["nom"]);
+		                infowindow.open(map, markers[i]["marker"]);
+		            }
+		        })(markers[i]["marker"], i));
+			}
 
 			//Appel de la méthode de récupération des infos de la map / 10 secondes
-		    //setInterval(getInfosMapFromJSON, 10000);
-		    //getInfosMapFromJSON();
+		    setInterval(getInfosMapFromJSON, 10000);
+		    getInfosMapFromJSON();
 	    },
 
 	    error : function(resultat, statut, erreur){
@@ -80,15 +84,15 @@ function recupInfosLieux(){
 
 function getInfosMapFromJSON(){
 	$.ajax({
-	    url : API_PATH + 'api/Vehicules',
+	    url : API_PATH + 'api/Vehicules/grouped',
 	    headers: {
 	        'Authorization': mytoken
 	    },
 	    type : 'GET',
 	    dataType: 'json',
 	    success : function(resultat, statut){
-	       	var vehicmap =resultat;
-	       	console.log("/!\\ Récupération des infos de la MAP");
+	    	console.log("/!\\ Récupération des infos de la MAP");			
+	       	var vehicmap = cleanVehiculeBeforeMap(resultat);
 	   		cleanMap();
 	   		turnLocationsIntoMarkers(vehicmap, firstLoad);
 	    },
@@ -103,7 +107,7 @@ function getInfosMapFromJSON(){
 function turnLocationsIntoMarkers(vehicmap, withBounds) {
 	for (i = 0; i < vehicmap.length; i++) {
 		markerTmp = vehicmap[i];
-		markerType = getTypeLabelForVehicule(markerTmp['Vehicule_Type']);
+		markerType = markerTmp['Vehicule_Type'];
 		marker = new googlMap.Marker({
 	      position: new googlMap.LatLng(
 	      	markerTmp['Position']['Latitude'], markerTmp['Position']['Longitude']),
@@ -112,11 +116,22 @@ function turnLocationsIntoMarkers(vehicmap, withBounds) {
 	    });
 	    if (withBounds && tabProp[markerType]) bounds.extend(marker.position);
 	    markers.push({
-	    	'nom': markerTmp['Name'],
+	    	'nom': "("+ markerTmp['Id'] + ") " + markerTmp['Brand'] + ' - ' + markerTmp['Model'] + " : " + markerTmp['Description'] , 
 	    	'type': markerType,
 	    	'marker': marker,
 	    	'persist':false
 		});
+	}
+	//Ajout des labels
+	for (i = 0 ; i < markers.length; i++){
+		if ( markers[i]["persist"] == false){
+			googlMap.event.addListener(markers[i]["marker"], 'click', (function (marker, i) {
+	            return function () {
+	                infowindow.setContent(markers[i]["nom"]);
+	                infowindow.open(map, markers[i]["marker"]);
+	            }
+	        })(markers[i]["marker"], i));
+		}
 	}
 	if (withBounds) map.fitBounds(bounds);
 	firstLoad = false;
@@ -170,24 +185,49 @@ function getTypeLabelWithTypeId(typeId){
 	return label;
 }
 
-function getTypeLabelForVehicule(typeId){
-	var label = "";
 
-	if (typeId == 0){
-		label = "propReparateurs"; //propReparateursMission
-	} else { //if (typeId == 1){
-		label = "propCamionMission";
-	} 
-	/*
-	'propCamionMission' : true,
-		'propCamionMissionPanne' : true,
-		'propCamionGarage': false,
-		'propReparateurs': true,
-		'propReparateursMission': true,
-	*/
-
-	return label;
+function cleanVehiculeBeforeMap(vehiculeJson){
+	tabFinal = [];
+	tabTmp = resolveReferences(vehiculeJson.TruckInMission);
+	for (i = 0; i < tabTmp.length; i++){
+		if (tabTmp[i] != null){
+			tabTmp[i]['Vehicule_Type'] = "propCamionMission";
+			tabFinal.push(tabTmp[i]);
+		}
+	}
+	tabTmp = resolveReferences(vehiculeJson.TruckInFailure);
+	for (i = 0; i < tabTmp.length; i++){
+		if (tabTmp[i] != null){
+			tabTmp[i]['Vehicule_Type'] = "propCamionMissionPanne";
+			tabFinal.push(tabTmp[i]);
+		}
+	}
+	tabTmp = resolveReferences(vehiculeJson.TruckInGarage);
+	for (i = 0; i < tabTmp.length; i++){
+		if (tabTmp[i] != null){
+			tabTmp[i]['Vehicule_Type'] = "propCamionGarage";
+			tabFinal.push(tabTmp[i]);
+		}
+	}
+	tabTmp = resolveReferences(vehiculeJson.RepairTruck);
+	for (i = 0; i < tabTmp.length; i++){
+		if (tabTmp[i] != null){
+			tabTmp[i]['Vehicule_Type'] = "propReparateurs";
+			tabFinal.push(tabTmp[i]);
+		}
+	}
+	tabTmp = resolveReferences(vehiculeJson.RepairTruckInMission);
+	for (i = 0; i < tabTmp.length; i++){
+		if (tabTmp[i] != null){
+			tabTmp[i]['Vehicule_Type'] = "propReparateursMission";
+			tabFinal.push(tabTmp[i]);
+		}
+	}
+	return tabFinal;
 }
+
+	
+	       
 
 
 

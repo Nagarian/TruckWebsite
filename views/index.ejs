@@ -93,7 +93,7 @@ center = [];
     window.map = new googlMap.Map(document.getElementById('map'), {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    var infowindow = new googlMap.InfoWindow();
+    infowindow = new googlMap.InfoWindow();
     bounds = new google.maps.LatLngBounds();
     map.fitBounds(bounds);
   }

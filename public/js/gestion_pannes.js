@@ -9,12 +9,6 @@ $(window).load(function(){
     setInterval(getPannesFromJSON, 10000);
     getPannesFromJSON();
 
-    //Gestion d'ouverture de la pop-up
-    $(".boutonsOpenPannes").click(function(){
-    	//On cache l'id de la panne en cours de traitement;
-		$("#hidFailureId").val($(this).attr('id').split("__")[1]);
-    });
-
     //Clic pour la pop-up
     $("#envoiReparateurBTN").click(function(){
 		postEnvoiReparateur();
@@ -51,7 +45,9 @@ function pushDonneesPanneTableau(fails){
 			"id" : fails[i].Id,
 			"date" : dateFail.getDate() +"/"+(dateFail.getMonth()+1)+"/"+dateFail.getFullYear()+" "+dateFail.getHours()+":"+dateFail.getMinutes(),
 			"nomMission" : fails[i].Mission.Name,
-			"description" : fails[i].Mission.Description
+			"description" : fails[i].Mission.Description,
+			"conducteur" : fails[i].Mission.Driver.FirstName + " " + fails[i].Mission.Driver.LastName,
+			"telConducteur" : fails[i].Mission.Driver.RealPhone.Serial_Code
 		});
 	}
 }
@@ -93,7 +89,9 @@ function creerBillet(panne){
     +            panne['description']
     +        "</span>"
     +        "<span>"
-    +             "<button id='BTNopenModalPanne__'"+panne['id']+"' type='button' style='width:100%;padding:3px;'' class='boutonsOpenPannes btn btn-danger btn-xs' data-toggle='modal' data-target='#pannesPopupConsultPanne'>" 
+    +             "<button id='BTNopenModalPanne__"+panne['id']+"' type='button' style='width:100%;padding:3px;' " 
+    +			  "class='boutonsOpenPannes btn btn-danger btn-xs' data-toggle='modal' data-target='#pannesPopupConsultPanne' "
+    +			  " onclick='clicBoutonPanne("+panne['id']+")' >" 
     +                "<i class='fa fa-car'>  </i> Envoyer un réparateur"
     +            "</button>"
     +        "</span>"
@@ -135,14 +133,14 @@ function recupListeReparateurs(){
 
 //POST du formulaire d'envoi d'un réparateur sur place
 function postEnvoiReparateur(){
-	if (clicPostReparateur){
-		clicPostReparateur = false;
+	if (clicPostReparateur == false){
+		clicPostReparateur = true;
 
 		repairerId = $("#reparateurIdFormSelect option:selected").val();
 		failureId = $("#hidFailureId").val();
 		if (repairerId == "" || failureId == ""){
 			alert("Veuillez indiquer le réparateur à envoyer sur place avant de poursuivre");
-			clicPostReparateur = true;
+			clicPostReparateur = false;
 			return;
 		} 
 		var dataFailure = { "RepairerId": repairerId };
@@ -163,7 +161,7 @@ function postEnvoiReparateur(){
 			},
 			complete : function(resultat, statut){
 				//Fermeture de la pop-up => click sur "Annuler"
-				clicPostReparateur = true;
+				clicPostReparateur = false;
 				$("#hidFailureId").val("");
 				$("#BTNcloseModalEnvoiRepar").click();
 				getPannesFromJSON(); //On recommence la procédure de récup' des pannes
@@ -173,4 +171,28 @@ function postEnvoiReparateur(){
 	}
 }
 
+//Gestion d'ouverture de la pop-up
+function clicBoutonPanne(idPanne){
+	//On cache l'id de la panne en cours de traitement;
+	var panne = trouvePanneAvecId(idPanne);
+	if ( panne != undefined ){
+		$("#PANNE_mission-name").val(panne.nomMission);
+		$("#PANNE_mission-desc").val(panne.description);
+		$("#PANNE_mission-conducteur").val(panne.conducteur);
+		$("#PANNE_mission-telephone").val(panne.telConducteur);
 
+		$("#PANNE_date").val(panne.date);
+		
+		$("#hidFailureId").val(idPanne);
+	}
+}
+
+//Trouve la panne possédant l'id voulu dans le tableau des pannes
+function trouvePanneAvecId(idPanne){
+	for ( i = 0; i < pannes.length; i++ ){
+		if ( pannes[i].id == idPanne){
+			return  pannes[i];
+		}
+	}
+	return undefined;
+}

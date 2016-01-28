@@ -137,7 +137,11 @@
                                     <% for(var i=0; i < mission.Failures.length; i++) { %>
                                     <tr class="even pointer">
                                         <td class="a-center "><%=mission.Failures[i].Date%></td>
-                                        <td class=" "><%= mission.Failures[i].Repairer.LastName %> <%= mission.Failures[i].Repairer.FirstName %></td>
+                                        <% if (mission.Failures[i].Repairer != null){ %>
+                                            <td class=" "><%= mission.Failures[i].Repairer.LastName %> <%= mission.Failures[i].Repairer.FirstName %></td>
+                                        <% } else { %>
+                                            <td class=" ">Aucun réparateur pour le moment.</td>
+                                        <% } %>
                                         <td class=" "><%=mission.Failures[i].State%></td>
                                         <td class=" "><a href="#">Voir la fiche associée</a></i>
                                         </td>
