@@ -80,12 +80,14 @@ function recupInfosLieux(){
 
 function getInfosMapFromJSON(){
 	$.ajax({
-	    url : '/infosVehiculesLieux',
+	    url : API_PATH + 'api/Vehicules',
+	    headers: {
+	        'Authorization': mytoken
+	    },
 	    type : 'GET',
-	    dataType : 'html',
+	    dataType: 'json',
 	    success : function(resultat, statut){
-	       	//FAKE : traitement du résultat => Transformation en tableau de locations
-	       	var vehicmap = resolveReferences(JSON.parse(resultat));
+	       	var vehicmap =resultat;
 	       	console.log("/!\\ Récupération des infos de la MAP");
 	   		cleanMap();
 	   		turnLocationsIntoMarkers(vehicmap, firstLoad);
@@ -168,7 +170,7 @@ function getTypeLabelWithTypeId(typeId){
 	return label;
 }
 
-function getTypeLabelVehicule(typeId){
+function getTypeLabelForVehicule(typeId){
 	var label = "";
 
 	if (typeId == 0){

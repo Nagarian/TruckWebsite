@@ -65,13 +65,11 @@ function gestionBillets(){
 		$("#badgeNombrePanne").addClass('bg-red'); //Badge en rouge
 		
 		//Si il y a une panne et qu'on a pas encore récupéré les réparateurs, on le fait.
-		if (!recupReparateursDone){
-			recupReparateurDone = true;
+		if (recupReparateursDone == false){
+			recupReparateursDone = true;
 			recupListeReparateurs();
 		}
 
-		//On supprime les billets
-		supprimerBillets();
 		//On crée les billets pour chacune d'entre-elles
 		for (i = 0; i < pannes.length; i++){
 			creerBillet(pannes[i]);
@@ -122,8 +120,7 @@ function recupListeReparateurs(){
 	        'Authorization': mytoken
 	    },
 	    type : 'GET',
-	    success : function(resultat, statut){
-	    	repairers = resolveReferences(JSON.parse(resultat));
+	    success : function(repairers, statut){
 	    	for (i=0; i<repairers.length; i++){
 				$("#reparateurIdFormSelect").append("<option value='"+repairers[i].Id+"'>"+ repairers[i].FirstName +" "+ repairers[i].LastName +"</option>");
 			}
