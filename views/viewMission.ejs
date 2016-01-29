@@ -124,6 +124,7 @@
                             <table id="tablePannes" class="table table-striped responsive-utilities jambo_table" style="margin-bottom:10px;">
                                 <thead>
                                     <tr class="headings">
+                                        <th>Numéro Panne</th>
                                         <th>Date</th>
                                         <th>Réparateur </th>
                                         <th>Etat panne </th>
@@ -136,13 +137,24 @@
                                     <% if (mission.Failures.length > 0) { %>
                                     <% for(var i=0; i < mission.Failures.length; i++) { %>
                                     <tr class="even pointer">
+                                        <td class="a-center "><%=mission.Failures[i].Id%></td>
                                         <td class="a-center "><%=mission.Failures[i].Date%></td>
                                         <% if (mission.Failures[i].Repairer != null){ %>
                                             <td class=" "><%= mission.Failures[i].Repairer.LastName %> <%= mission.Failures[i].Repairer.FirstName %></td>
                                         <% } else { %>
                                             <td class=" ">Aucun réparateur pour le moment.</td>
                                         <% } %>
-                                        <td class=" "><%=mission.Failures[i].State%></td>
+                                        <% etatPanne = ""; 
+                                        if ( mission.Failures[i].State == 0 ){ 
+                                            etatPanne = "Déclarée"; 
+                                        } else if ( mission.Failures[i].State == 1 ){ 
+                                            etatPanne = "En cours de traitement"; 
+                                        } else if ( mission.Failures[i].State == 2 ){ 
+                                            etatPanne = "Réparateur en approche"; 
+                                        } else { 
+                                            etatPanne = "Résolue";
+                                        }%>
+                                        <td class=" "><%=etatPanne%></td>
                                         <td class=" "><a href="#">Voir la fiche associée</a></i>
                                         </td>
                                     </tr>
